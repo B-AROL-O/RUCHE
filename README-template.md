@@ -11,7 +11,7 @@ This template provides a basic [Development Container](https://containers.dev/) 
 
 ## Copyright and license for "python-project-template"
 
-Copyright (C) 2024, [Gianpaolo Macario](https://github.com/gmacario), all rights reserved.
+Copyright (C) 2024-2025, [Gianpaolo Macario](https://github.com/gmacario), all rights reserved.
 
 ### Source code license
 
