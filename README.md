@@ -12,7 +12,6 @@ Incidentally, since [Ruché](https://en.wikipedia.org/wiki/Ruch%C3%A9) is a red 
 Copyright (C) 2025, [B-AROL-O Team](https://github.com/B-AROL-O), all rights reserved.
 
 **NOTE**: This repository is based upon <https://github.com/arol-polito/python-project-template>.
-See [README-template.md](README-template.md) for details.
 
 ### Source code license
 
