@@ -1,0 +1,10 @@
+[project]
+name = "ruche"
+version = "0.1.0"
+description = "ROS2-based Unified Control for Hugging-face Embodied-agents"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "gradio[oauth]>=5.49.1",
+    "huggingface-hub>=1.1.4",
+]
