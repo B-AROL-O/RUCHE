@@ -9,7 +9,7 @@ app_file: app.py
 pinned: false
 hf_oauth: true
 hf_oauth_scopes:
-- inference-api
+  - inference-api
 license: mit
 short_description: ROS2-based Unified Control for Hugging-face Embodied-agents
 ---
