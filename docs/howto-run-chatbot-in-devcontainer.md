@@ -31,7 +31,7 @@ Paste the value of the token which you have just created, then type ENTER.
 Result:
 
 ```text
-Enter your token (input will not be visible): 
+Enter your token (input will not be visible):
 Add token as git credential? [y/N]: y
 Token is valid (permission: write).
 The token `RUCHE_devcontainer` has been saved to /home/vscode/.cache/huggingface/stored_tokens
