@@ -1028,12 +1028,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "gradio", extra = ["oauth"] },
+    { name = "hf-xet" },
     { name = "huggingface-hub" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "gradio", extras = ["oauth"], specifier = ">=5.49.1" },
+    { name = "hf-xet", specifier = ">=1.2.0" },
     { name = "huggingface-hub", specifier = ">=1.1.4" },
 ]
 

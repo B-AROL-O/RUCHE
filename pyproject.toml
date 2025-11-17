@@ -6,5 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "gradio[oauth]>=5.49.1",
+    "hf-xet>=1.2.0",
     "huggingface-hub>=1.1.4",
 ]
