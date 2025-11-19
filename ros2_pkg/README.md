@@ -6,7 +6,7 @@ This ROS2 package uses a `ros2_control' controller to control a simulated or rea
 
 ## How to run
 
-Clone the repo and cd to the `ruche_ros2_control` folder.
+Clone the repository and cd to the `ruche_ros2_control` folder.
 
 Install the dependencies:
 
