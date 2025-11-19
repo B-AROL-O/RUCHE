@@ -32,7 +32,24 @@
 
         <!-- Case: real hardware -->
         <xacro:unless value="$(arg simulate)">
-            <!-- TODO: Insert hardware interface here -->
+            <hardware>
+                <plugin>ruche_ros2_control/ElegooBt2SerialHardware</plugin>
+                <param name="left_wheel_name">wheel_l_joint</param>
+                <param name="right_wheel_name">wheel_r_joint</param>
+                <param name="device_id">58:BF:25:9D:CD:F6</param>
+            </hardware>
+            <joint name="wheel_l_joint">
+                <command_interface name="velocity">
+                    <param name="min">-10</param>
+                    <param name="max">10</param>
+                </command_interface>
+            </joint>
+            <joint name="wheel_r_joint">
+                <command_interface name="velocity">
+                    <param name="min">-10</param>
+                    <param name="max">10</param>
+                </command_interface>
+            </joint>
         </xacro:unless>
     </xacro:macro>
 
