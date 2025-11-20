@@ -3,10 +3,10 @@ import random
 import asyncio
 import json
 
-# --- CLASSI DI BASE LOCALI (per evitare l'errore di importazione) ---
+# --- LOCAL BASE CLASSES (to avoid import error) ---
 
 class Tool:
-    """Classe base per gli strumenti MCP, definita localmente."""
+    """Base class for MCP tools, defined locally."""
     name: str = "tool"
     description: str = "A mock tool description."
     
@@ -14,7 +14,7 @@ class Tool:
         raise NotImplementedError("Tool run method must be implemented in concrete class.")
 
 class MCPServer:
-    """Classe base per il server MCP, definita localmente."""
+    """Base class for the MCP server, defined locally."""
     
     def __init__(self):
         self._tools = {}
@@ -24,23 +24,23 @@ class MCPServer:
         print(f"INFO: Mock Tool registered: {tool_instance.name}")
         
     def start(self):
-        # Questo metodo mock non viene chiamato tramite asyncio.run
+        # This mock method is not called via asyncio.run
         print("INFO: MCP Server Mock Started successfully.")
         pass
 
-# 🤖 Robot Core: State and Logic
+# State and Logic
 class Robot:
-    """Gestisce lo stato interno e la logica di movimento del robot."""
+    """Manages the robot's internal state and movement logic."""
     def __init__(self):
         self.x = 0.0
         self.y = 0.0
-        self.heading = 0  # gradi: 0=Est, 90=Nord, 180=Ovest, 270=Sud
+        self.heading = 0  # degrees: 0=East, 90=North, 180=West, 270=South
         self.distance_traveled = 0.0
         self.left_turns = 0
         self.right_turns = 0
 
     def get_state(self) -> dict:
-        """Restituisce la telemetria attuale del robot arrotondata per l'output."""
+        """Returns the current robot telemetry rounded for output."""
         return {
             "x": round(self.x, 2),
             "y": round(self.y, 2),
@@ -51,17 +51,18 @@ class Robot:
         }
 
     async def move_forward(self, distance: float) -> dict:
-        """Sposta il robot in avanti in base alla direzione corrente."""
+        """Moves the robot forward based on the current heading."""
         if distance <= 0:
             raise ValueError("Distance must be a positive float.")
 
         rad_heading = math.radians(self.heading)
-        mock_error_factor = random.uniform(0.95, 1.05)  # Simula errore ±5%
+        mock_error_factor = random.uniform(0.95, 1.05)  # Simulates ±5% error
 
+        # Calculate movement components
         dx = distance * math.cos(rad_heading) * mock_error_factor
         dy = distance * math.sin(rad_heading) * mock_error_factor
         
-        # Simula il tempo di esecuzione
+        # Simulate execution time
         await asyncio.sleep(distance * 0.05) 
 
         self.x += dx
@@ -76,7 +77,7 @@ class Robot:
         }
 
     async def turn_left(self) -> dict:
-        """Gira il robot di 90 gradi a sinistra."""
+        """Turns the robot 90 degrees left."""
         self.heading = (self.heading + 90) % 360
         self.left_turns += 1
         await asyncio.sleep(0.1)
@@ -88,7 +89,7 @@ class Robot:
         }
 
     async def turn_right(self) -> dict:
-        """Gira il robot di 90 gradi a destra."""
+        """Turns the robot 90 degrees right."""
         self.heading = (self.heading + 270) % 360
         self.right_turns += 1
         await asyncio.sleep(0.1)
@@ -133,7 +134,7 @@ class GetTelemetry(Tool):
     async def run(self):
         return robot_instance.get_state()
 
-# Questo blocco viene eseguito solo per stampare le registrazioni, ma non avvia nulla
+# This block only runs to print registrations, but does not start anything
 if __name__ == "__main__":
     server = MCPServer()
     server.register_tool(MoveForward())
