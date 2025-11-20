@@ -14,8 +14,8 @@ Open <https://huggingface.co/settings/tokens>)
 
 > **Create new Access Token**
 
-- Token tpe: **Write** <!-- Fine-grained | Read | Write -->
-- Token name: `TODO`
+- Token type: **Write** <!-- Fine-grained | Read | Write -->
+- Token name: (choose a meaningful name, example: `B-AROL-O/RUCHE GitHub Actions`)
 
 <!--
 - User permissions (gmacario): `TODO`
@@ -67,5 +67,7 @@ Always in tab "Repository variables", click on **New repository variable**
 Result:
 
 ![2025-11-20-configure-github-secrets04.png](images/2025-11-20-configure-github-secrets04.png)
+
+Once all the Actions secrets and variables have been defined, the GitHub Workflows should run successfully.
 
 <!-- EOF -->
