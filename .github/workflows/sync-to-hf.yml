@@ -11,24 +11,24 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-  steps:
-    - name: Prepare ssh keys
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.LINODE_KEY }}
-        known_hosts: ${{ secrets.LINODE_KNOWN_HOSTS }}
+    steps:
+      - name: Prepare ssh keys
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.LINODE_KEY }}
+          known_hosts: ${{ secrets.LINODE_KNOWN_HOSTS }}
 
-    - name: Checkout the Repo
-      uses: actions/checkout@v2
-      with:
-        ssh-key: ${{ secrets.LINODE_KEY }}
-        fetch-depth: 0
-        ref: master
+      - name: Checkout the Repo
+        uses: actions/checkout@v2
+        with:
+          ssh-key: ${{ secrets.LINODE_KEY }}
+          fetch-depth: 0
+          ref: master
 
-    - name: Push to Linode
-      run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git remote add prod ssh://[username]@[host]:/var/repos/[remote-repo-name].git
-        git push prod
+      - name: Push to Linode
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git remote add prod ssh://[username]@[host]:/var/repos/[remote-repo-name].git
+          git push prod
 # EOF
