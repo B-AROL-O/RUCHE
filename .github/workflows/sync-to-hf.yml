@@ -3,8 +3,9 @@ name: Linode Push Update
 
 on:
   push:
-  branches:
-    - master
+    branches:
+      - main
+      - 25-feat-automatically-push-main-branch-to-huggingface # Only for test
 
 jobs:
   build:
