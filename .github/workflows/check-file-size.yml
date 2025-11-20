@@ -1,11 +1,12 @@
 ---
-
 name: Check file size
 
 # References:
 # - https://huggingface.co/docs/hub/spaces-github-actions
 
-on:               # or directly `on: [push]` to run the action on every push on any branch
+permissions: {}
+
+on: # or directly `on: [push]` to run the action on every push on any branch
   pull_request:
     branches: [main]
 
@@ -15,6 +16,13 @@ on:               # or directly `on: [push]` to run the action on every push on 
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
     steps:
       - name: Check large files
         uses: ActionsDesk/lfs-warning@v2.0
