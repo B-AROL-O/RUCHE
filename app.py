@@ -2,43 +2,43 @@ import gradio as gr
 import asyncio
 from huggingface_hub import InferenceClient
 
-# Importa l'istanza del robot e la sua logica da mcp_server.py
+# Import the robot instance and its logic from mcp_server.py
 from mcp_server import robot_instance 
 
-# --- 1. FUNZIONI WRAPPER SINCRONE PER IL ROBOT (Necessarie per Gradio) ---
+# --- 1. SYNCHRONOUS ROBOT WRAPPER FUNCTIONS (Required for Gradio) ---
 
 def get_telemetry_sync() -> str:
-    """Restituisce lo stato del robot formattato per l'interfaccia."""
+    """Returns the robot state formatted for the interface."""
     state = robot_instance.get_state()
-    return f"Telemetria: X={state['x']}, Y={state['y']}, Dir={state['heading']}°, Distanza Percorsa={state['distance_traveled']:.2f}"
+    return f"Telemetry: X={state['x']}, Y={state['y']}, Heading={state['heading']}°, Distance Traveled={state['distance_traveled']:.2f}"
 
 def move_forward_sync(distance: float) -> str:
-    """Esegue move_forward asincrono e restituisce lo stato aggiornato."""
+    """Executes asynchronous move_forward and returns the updated state."""
     if distance <= 0:
-        return "Errore: la distanza deve essere un numero positivo."
+        return "Error: Distance must be a positive number."
     
     try:
-        # Usa asyncio.run per chiamare la funzione asincrona
+        # Use asyncio.run to call the asynchronous function
         result = asyncio.run(robot_instance.move_forward(distance))
         state = result['current_state']
-        return f"Avanzamento di {distance} metri completato.\nStato: X={state['x']}, Y={state['y']}, Dir={state['heading']}°"
+        return f"Forward movement of {distance} meters completed.\nState: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
     except ValueError as e:
-        return f"Errore: {e}"
+        return f"Error: {e}"
 
 def turn_left_sync() -> str:
-    """Esegue turn_left asincrono e restituisce lo stato aggiornato."""
+    """Executes asynchronous turn_left and returns the updated state."""
     result = asyncio.run(robot_instance.turn_left())
     state = result['current_state']
-    return f"Giro a SINISTRA completato.\nStato: X={state['x']}, Y={state['y']}, Dir={state['heading']}°"
+    return f"LEFT turn completed.\nState: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
 
 def turn_right_sync() -> str:
-    """Esegue turn_right asincrono e restituisce lo stato aggiornato."""
+    """Executes asynchronous turn_right and returns the updated state."""
     result = asyncio.run(robot_instance.turn_right())
     state = result['current_state']
-    return f"Giro a DESTRA completato.\nStato: X={state['x']}, Y={state['y']}, Dir={state['heading']}°"
+    return f"RIGHT turn completed.\nState: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
 
 
-# --- 2. FUNZIONE E INTERFACCIA CHATBOT ORIGINALE ---
+# --- 2. ORIGINAL CHATBOT FUNCTION AND INTERFACE ---
 
 def respond(
     message,
@@ -50,7 +50,7 @@ def respond(
     hf_token: gr.OAuthToken,
 ):
     """
-    Funzione originale per l'interazione con l'LLM tramite Hugging Face Inference API.
+    Original function for LLM interaction via the Hugging Face Inference API.
     """
     client = InferenceClient(token=hf_token.token, model="openai/gpt-oss-20b")
     messages = [{"role": "system", "content": system_message}]
@@ -91,25 +91,25 @@ chatbot = gr.ChatInterface(
     ],
 )
 
-# --- 3. STRUTTURA BLOCKS CON DUE TAB (Chatbot e Robot) ---
+# --- 3. BLOCKS STRUCTURE WITH TWO TABS (Chatbot and Robot) ---
 
 with gr.Blocks(title="Robot Control and Chatbot MCP") as demo:
     with gr.Sidebar():
         gr.LoginButton()
     
-    # PRIMA TAB: La Chatbot originale
+    # FIRST TAB: The original Chatbot
     with gr.Tab("Chatbot"): 
         chatbot.render()
         
-    # SECONDA TAB: L'interfaccia di controllo del Robot/MCP Tools
-    with gr.Tab("Controllo Robot MCP"): 
-        gr.Markdown("## 🤖 Interfaccia di Controllo e Telemetria del Robot")
-        robot_output = gr.Textbox(label="Risultato Ultima Azione / Telemetria")
+    # SECOND TAB: The Robot Control / MCP Tools Interface
+    with gr.Tab("Robot Control MCP"): 
+        gr.Markdown("## 🤖 Robot Control and Telemetry Interface")
+        robot_output = gr.Textbox(label="Last Action Result / Telemetry")
 
-        # Telemetria
+        # Telemetry
         with gr.Row():
-            telemetry_btn = gr.Button("Aggiorna Telemetria", variant="secondary")
-            # ESPOSIZIONE MCP: api_name="get_telemetry"
+            telemetry_btn = gr.Button("Update Telemetry", variant="secondary")
+            # MCP EXPOSURE: api_name="get_telemetry"
             telemetry_btn.click(
                 fn=get_telemetry_sync, 
                 inputs=[], 
@@ -117,11 +117,11 @@ with gr.Blocks(title="Robot Control and Chatbot MCP") as demo:
                 api_name="get_telemetry"
             )
 
-        # Controlli di Movimento
+        # Movement Controls
         with gr.Row():
-            distance_input = gr.Number(label="Distanza Avanti (metri)", value=1.0)
-            forward_btn = gr.Button("Vai Avanti", variant="primary")
-            # ESPOSIZIONE MCP: api_name="move_forward"
+            distance_input = gr.Number(label="Forward Distance (meters)", value=1.0)
+            forward_btn = gr.Button("Move Forward", variant="primary")
+            # MCP EXPOSURE: api_name="move_forward"
             forward_btn.click(
                 fn=move_forward_sync,
                 inputs=[distance_input],
@@ -130,17 +130,17 @@ with gr.Blocks(title="Robot Control and Chatbot MCP") as demo:
             )
         
         with gr.Row():
-            left_btn = gr.Button("Gira a Sinistra (90°)")
-            right_btn = gr.Button("Gira a Destra (90°)")
+            left_btn = gr.Button("Turn Left (90°)")
+            right_btn = gr.Button("Turn Right (90°)")
             
-            # ESPOSIZIONE MCP: api_name="turn_left"
+            # MCP EXPOSURE: api_name="turn_left"
             left_btn.click(
                 fn=turn_left_sync,
                 inputs=[],
                 outputs=robot_output,
                 api_name="turn_left" 
             )
-            # ESPOSIZIONE MCP: api_name="turn_right"
+            # MCP EXPOSURE: api_name="turn_right"
             right_btn.click(
                 fn=turn_right_sync,
                 inputs=[],
@@ -149,11 +149,11 @@ with gr.Blocks(title="Robot Control and Chatbot MCP") as demo:
             )
 
 
-# --- 4. AVVIO DEL SERVER MCP (Cruciale) ---
+# --- 4. STARTING THE MCP SERVER (Crucial) ---
 
 if __name__ == "__main__":
-    print("Avvio del server Gradio/MCP...")
-    # L'opzione mcp_server=True abilita l'esposizione degli endpoint API definiti da api_name.
+    print("Starting Gradio/MCP server...")
+    # The mcp_server=True option enables the exposure of API endpoints defined by api_name.
     demo.launch(
         mcp_server=True, 
         share=False,
