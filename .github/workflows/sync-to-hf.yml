@@ -28,7 +28,7 @@ jobs:
           known_hosts: ${{ secrets.LINODE_KNOWN_HOSTS }}
 
       - name: Checkout the Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
         with:
           ssh-key: ${{ secrets.LINODE_KEY }}
           fetch-depth: 0
