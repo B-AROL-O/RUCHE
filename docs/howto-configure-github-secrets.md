@@ -1,4 +1,4 @@
-## HOWTO Configure GitHub Secrets
+# HOWTO Configure GitHub Secrets
 
 ## Introduction
 
