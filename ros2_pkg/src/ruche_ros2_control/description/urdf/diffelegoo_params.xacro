@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+    <!-- Read config YAML -->
+    <xacro:property name="yaml_path" value="$(find ruche_ros2_control)/config/$(arg robot_name)_controllers.yaml" />
+    <xacro:property name="dict_base" value="${xacro.load_yaml(yaml_path)}"/>
+    <xacro:property name="dict_ctrl" value="${dict_base['base_controller']['ros__parameters']}"/>
+    <!-- X: distance from back to front -->
+    <xacro:property name="base_width" value="0.4" />  
+    <!-- Y: distance between the wheels -->
+    <xacro:property name="base_depth" value="${dict_ctrl['wheel_separation']}" />
+    <!-- Z -->
+    <xacro:property name="base_height" value="0.1" />
+    <xacro:property name="base_mass" value="3" />
+
+    <xacro:property name="wheel_r" value="${dict_ctrl['wheel_radius']}" />
+    <xacro:property name="wheel_height" value="0.03" />
+    <xacro:property name="wheel_mass" value="0.1" />
+    <xacro:property name="wheel_z_from_base" value="0.01" />
+    <xacro:property name="wheel_x_from_back" value="${dict_ctrl['wheel_radius'] + 0.02}" />
+
+    <xacro:property name="caster_r" value="0.04" />
+    <xacro:property name="caster_mass" value="0.05" />
+</robot>
