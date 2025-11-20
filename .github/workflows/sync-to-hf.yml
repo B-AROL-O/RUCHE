@@ -7,10 +7,19 @@ on:
       - main
       - 25-feat-automatically-push-main-branch-to-huggingface # Only for test
 
+permissions: {}
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
     steps:
       - name: Prepare ssh keys
         uses: shimataro/ssh-key-action@v2
@@ -31,4 +40,5 @@ jobs:
           git config user.email github-actions@github.com
           git remote add prod ssh://[username]@[host]:/var/repos/[remote-repo-name].git
           git push prod
+
 # EOF
