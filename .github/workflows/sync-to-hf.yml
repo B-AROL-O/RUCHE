@@ -50,7 +50,7 @@ jobs:
         env:
           HF_USERNAME: "gmacario" # TODO: Use secrets
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_ORGNAME: "" # TODO: Use secrets
+          HF_ORGNAME: "MCP-1st-Birthday" # TODO: Use secrets
           HF_SPACENAME: "RUCHE" # TODO: Use secrets
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: git push "https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_ORGNAME/$HF_SPACENAME" "$BRANCH_NAME"
