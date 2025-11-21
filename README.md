@@ -27,6 +27,70 @@ Incidentally, since [Ruché](https://en.wikipedia.org/wiki/Ruch%C3%A9) is a red 
 An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https://huggingface.co/docs/huggingface_hub/v0.22.2/en/index), and the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index).
 -->
 
+## How to run the RUCHE project
+
+The RUCHE project can easily be run using a [Development Container](https://containers.dev/).
+
+### Inside the Hugging Face Space
+
+The `main` branch of the RUCHE project is automatically synchronized to space <https://huggingface.co/spaces/MCP-1st-Birthday/RUCHE>, therefore to run the project you can simply open this URL inside a web browser
+
+<!-- TODO: Add screenshot -->
+
+- Click **Sign in with Hugging Face**, then enter your message and wait for the results
+
+### Using GitHub Codespaces
+
+You can use [GitHub Codespaces](https://github.com/features/codespaces) to create a Development Environment for the RUCHE project:
+
+- From your browser open <https://github.com/B-AROL-O/RUCHE>
+- Choose either the `main` (production) branch or other branches / Pull Requests you want to test
+- Click the **\<\> Code** button, then in tab "Codespaces" click **+** to create a new codespace
+- Open a bash Terminal and type:
+
+  ```bash
+  # Login to Gradio
+  uv run hf auth login
+
+  # Run the RUCHE chatbot app
+  uv run app.py
+  ```
+
+  <!-- TODO: Add screenshot -->
+
+- Continue as described in section "Inside the Hugging Face Space"
+
+### Using Visual Studio Code
+
+Alternatively, if you have a laptop (Windows, mac OS or Linux) with the following installed software:
+
+- [Visual Studio Code](https://code.visualstudio.com/) with the following extensions: [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+- A recent release of [Docker](https://www.docker.com/) (either [Docker Engine](https://docs.docker.com/engine/) or [Docker Desktop](https://www.docker.com/products/docker-desktop/))
+
+you can create a local Development Environment with the following steps:
+
+- Launch Visual Studio
+- Open the Command Palette and type:
+  > Git: Clone
+  > then specify the repository <https://github.com/B-AROL-O/RUCHE>
+- Open the Command Palette and type:
+  > Dev Containers: Rebuild and Reopen in Container
+- Open a bash Terminal and type:
+
+  ```bash
+  # Login to Gradio
+  uv run hf auth login
+
+  # Run the RUCHE chatbot app
+  uv run app.py
+  ```
+
+- Read the instructions displayed in the terminal and open the link in your browser
+
+  ![2025-11-17-vscode-run-app04.png](docs/images/2025-11-17-vscode-run-app04.png)
+
+- Continue as described in section "Inside the Hugging Face Space"
+
 ## Copyright and License
 
 Copyright (C) 2025, [B-AROL-O Team](https://github.com/B-AROL-O), all rights reserved.
