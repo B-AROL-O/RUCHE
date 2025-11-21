@@ -1,7 +1,6 @@
 import math
 import random
 import asyncio
-import json
 
 # --- LOCAL BASE CLASSES (to avoid import error) ---
 
