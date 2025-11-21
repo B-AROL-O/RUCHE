@@ -29,6 +29,7 @@
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
+#include "nlohmann/json.hpp"
 
 namespace ruche_ros2_control
 {
@@ -76,6 +77,7 @@ private:
   Config cfg_;
   Wheel wheel_l_;
   Wheel wheel_r_;
+  nlohmann::json json_cmd_;
 };
 
 }  // namespace ruche_ros2_control

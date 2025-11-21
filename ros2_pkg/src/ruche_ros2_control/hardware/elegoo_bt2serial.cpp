@@ -50,6 +50,8 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
   wheel_l_.name = cfg_.left_wheel_name;
   wheel_r_.name = cfg_.right_wheel_name;
 
+
+
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
   {
     // DiffBotSystem has exactly two states and one command interface on each joint
@@ -85,8 +87,10 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_configure(
   {
     set_command(name, 0.0);
   }
+  
+  
   RCLCPP_INFO(get_logger(), "Successfully configured!");
-
+  
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -101,6 +105,9 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_activate(
     set_command(name, get_state(name));
   }
 
+  RCLCPP_INFO(get_logger(), "Connecting to the robot ...please wait...");
+  // TODO: open bluetooth connection
+
   RCLCPP_INFO(get_logger(), "Successfully activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -109,6 +116,9 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   RCLCPP_INFO(get_logger(), "Deactivating ...please wait...");
+
+  RCLCPP_INFO(get_logger(), "Connecting to the robot ...please wait...");
+  // TODO: close bluetooth connection
 
   RCLCPP_INFO(get_logger(), "Successfully deactivated!");
 
@@ -119,13 +129,20 @@ hardware_interface::return_type ElegooBt2SerialHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
 
+  // No feedback from robot. Otherwise the states are read here
   return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type ruche_ros2_control ::ElegooBt2SerialHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-
+  // Read controls
+  for (const auto & [name, descr] :joint_command_interfaces_)
+  {
+    json_cmd_[name] = get_command(name);
+  }
+  // TODO: remove this!
+  RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "\r\nCommands received: %s", json_cmd_.dump().c_str());
   return hardware_interface::return_type::OK;
 }
 
