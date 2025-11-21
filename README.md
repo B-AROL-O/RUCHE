@@ -62,7 +62,7 @@ You can use [GitHub Codespaces](https://github.com/features/codespaces) to creat
 
 ### Using Visual Studio Code
 
-Alternatively, if you have a laptop (Windows, mac OS or Linux) with the following installed software:
+Alternatively, if you have a laptop (Windows, macOS or Linux) with the following installed software:
 
 - [Visual Studio Code](https://code.visualstudio.com/) with the following extensions: [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 - A recent release of [Docker](https://www.docker.com/) (either [Docker Engine](https://docs.docker.com/engine/) or [Docker Desktop](https://www.docker.com/products/docker-desktop/))
