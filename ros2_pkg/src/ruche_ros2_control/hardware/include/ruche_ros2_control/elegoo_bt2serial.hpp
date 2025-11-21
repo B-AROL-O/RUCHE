@@ -34,6 +34,22 @@ namespace ruche_ros2_control
 {
 class ElegooBt2SerialHardware : public hardware_interface::SystemInterface
 {
+
+// Structure to store config parameters and wheel data
+struct Config
+{
+  std::string left_wheel_name = "";
+  std::string right_wheel_name = "";
+  std::string device_id = "";
+  int timeout_ms = 0;
+};
+  
+struct Wheel
+{
+  std::string name = "";
+  double cmd_vel = 0.0;
+};
+
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(ElegooBt2SerialHardware)
 
@@ -57,6 +73,9 @@ public:
 
 private:
   // Parameters
+  Config cfg_;
+  Wheel wheel_l_;
+  Wheel wheel_r_;
 };
 
 }  // namespace ruche_ros2_control

@@ -41,6 +41,15 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
     return hardware_interface::CallbackReturn::ERROR;
   }
 
+  // Read parameters from the xml
+  cfg_.left_wheel_name = info_.hardware_parameters["left_wheel_name"];
+  cfg_.right_wheel_name = info_.hardware_parameters["right_wheel_name"];
+  cfg_.device_id = info_.hardware_parameters["device_id"];
+  cfg_.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
+
+  wheel_l_.name = cfg_.left_wheel_name;
+  wheel_r_.name = cfg_.right_wheel_name;
+
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
   {
     // DiffBotSystem has exactly two states and one command interface on each joint
