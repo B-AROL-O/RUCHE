@@ -25,6 +25,7 @@
     "vscode": {
       "extensions": [
         "esbenp.prettier-vscode",
+        "github.vscode-github-actions",
         "mhutchie.git-graph",
         "ms-python.black-formatter"
       ]
