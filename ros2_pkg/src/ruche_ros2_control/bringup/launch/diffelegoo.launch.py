@@ -1,7 +1,21 @@
+# Copyright 2020 ros2_control Development Team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from os import path
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.actions import RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -35,7 +49,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "simulate",
-            default_value="true",
+            default_value="false",
             description="true: launch the simulation, "
             "false: control the actual hardware"
         )
@@ -63,11 +77,13 @@ def generate_launch_description():
         " ",
         PathJoinSubstitution([
             FindPackageShare(pkg_name),
-            "description",
+            "urdf",
             urdf_name
         ]),
         " robot_name:=",
         robot_name,
+        " simulate:=",
+        simulate,
     ])
 
     robot_description_params = {"robot_description": robot_description}
@@ -135,6 +151,14 @@ def generate_launch_description():
         parameters=[robot_description_params]
     )
 
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers],
+        output="both",
+        condition=UnlessCondition(simulate)
+    )
+
     ############
     # SPAWNERS #
     ############
@@ -148,12 +172,12 @@ def generate_launch_description():
     # joint_state_broadcaster -> robot_controller
 
     # Joint state broadcast spawner
-    joint_state_br_spawner = Node(
+    joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=[
             "joint_state_broadcaster"
-        ]
+        ],
     )
 
     # Robot controller spawner
@@ -162,8 +186,11 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "base_controller",
-            "--param-file", robot_controllers
-        ]
+            "--param-file", robot_controllers,
+            # Optionally redirect /cmd_vel to the controller
+            # "--controller-ros-args",
+            # "-r /base_controller/cmd_vel:=/cmd_vel",
+        ],
     )
 
     # Spawn robot in Gazebo Harmonic
@@ -186,7 +213,7 @@ def generate_launch_description():
     # controller sequence
     seq_robot_controller_after_joint_st_br = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=joint_state_br_spawner,
+            target_action=joint_state_broadcaster_spawner,
             on_exit=[robot_controller_spawner]
         )
     )
@@ -196,8 +223,9 @@ def generate_launch_description():
         gz_sim_launchfile,
         ros_gz_bridge_node,
         robot_spawner,
+        control_node,
         robot_state_pub_node,
-        joint_state_br_spawner,
+        joint_state_broadcaster_spawner,
         seq_robot_controller_after_joint_st_br,
     ]
 
