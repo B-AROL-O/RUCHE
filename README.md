@@ -27,6 +27,106 @@ Incidentally, since [Ruché](https://en.wikipedia.org/wiki/Ruch%C3%A9) is a red 
 An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https://huggingface.co/docs/huggingface_hub/v0.22.2/en/index), and the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index).
 -->
 
+## How to run the RUCHE project
+
+### Inside the Hugging Face Space
+
+The `main` branch of the RUCHE project is automatically synchronized to space <https://huggingface.co/spaces/MCP-1st-Birthday/RUCHE>, therefore to run the project you can simply open this URL inside a web browser
+
+<!-- TODO: Add screenshot -->
+
+- Click **Sign in with Hugging Face**, then enter your message and wait for the results
+
+### Using GitHub Codespaces
+
+You can use [GitHub Codespaces](https://github.com/features/codespaces) to create a Development Environment for the RUCHE project:
+
+- From your browser open <https://github.com/B-AROL-O/RUCHE>
+- Choose either the `main` (production) branch or other branches / Pull Requests you want to test
+- Click the **\<\> Code** button, then in tab "Codespaces" click **+** to create a new codespace
+- Open a bash Terminal and type:
+
+  ```bash
+  # Login to Gradio
+  uv run hf auth login
+
+  # Run the RUCHE chatbot app
+  uv run app.py
+  ```
+
+  <!-- TODO: Add screenshot -->
+
+- Continue as described in section "Inside the Hugging Face Space"
+
+### Using Visual Studio Code
+
+The RUCHE project can easily be run using a [Development Container](https://containers.dev/).
+
+Prerequisites:
+
+- A laptop or desktop PC running a recent version of Windows, macOS or Linux
+- [Visual Studio Code](https://code.visualstudio.com/) with the following extensions: [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+- A recent release of [Docker](https://www.docker.com/) (either [Docker Engine](https://docs.docker.com/engine/) or [Docker Desktop](https://www.docker.com/products/docker-desktop/))
+
+Create a local Development Environment with the following steps:
+
+- Launch Visual Studio
+- Open the Command Palette and type:
+
+  > Git: Clone
+
+  then specify the repository: <https://github.com/B-AROL-O/RUCHE>
+
+- Open the Command Palette and type:
+  > Dev Containers: Rebuild and Reopen in Container
+- Open a bash Terminal and type:
+
+  ```bash
+  # Login to Gradio
+  uv run hf auth login
+
+  # Run the RUCHE chatbot app
+  uv run app.py
+  ```
+
+- Read the instructions displayed in the terminal and open the link in your browser
+
+  ![2025-11-17-vscode-run-app04.png](docs/images/2025-11-17-vscode-run-app04.png)
+
+- Continue as described in section "Inside the Hugging Face Space"
+
+## Tips for contributors
+
+### Knowing Super-Linter
+
+The RUCHE project has strict code rules, which are enforced with [Super-Linter](https://github.com/super-linter/super-linter).
+
+Super-Linter checks must pass before a Pull-Request can be reviewed and merged. That this might discourage some new contributors, but this is done to mitigate risks of conflicts and reduce the chances that buggy code will go straight to production.
+
+If you run into troubles with Super-Linter when you push your feature branch or create a Pull Request, please refer to the Super-Linter documentation.
+
+If you believe that some Super-Linter rules should be relaxed, consider adding a new a Super-Linter configuration rule or modifying an existing one:
+
+- The Super-Linter workflow is stored under [`.github/workflows/linter.yml`](.github/workflows/linter.yml)
+- The default configuration of all Super-Linter checkers can be inspected at <https://github.com/super-linter/super-linter/tree/main/TEMPLATES>
+- The files which override the default configuration for each Super-Linter checker are stored under [.github/linters/](.github/linters/)
+
+### Using Prettier
+
+[Prettier](https://prettier.io/) is an opinionated Code Formatter which is able to check and verify the structure of source files in serveral formats, such as Markdown, Python and others. Most Super-Linter checks ensure that the code in the RUCHE codebase aligns with Prettier preferred formatting.
+
+To verify that one or more files are in line with Super-Linter expectations you can run the following command:
+
+```bash
+prettier filename
+```
+
+If Prettier notices some misalignment you can easily reformat them before creating the Pull Request:
+
+```bash
+prettier -w filename
+```
+
 ## Copyright and License
 
 Copyright (C) 2025, [B-AROL-O Team](https://github.com/B-AROL-O), all rights reserved.
