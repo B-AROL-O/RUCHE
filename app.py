@@ -3,7 +3,7 @@ import asyncio
 import threading
 from huggingface_hub import InferenceClient
 
-from mcp_server import robot_instance
+from robot import robot_instance
 
 
 # ============================================================
