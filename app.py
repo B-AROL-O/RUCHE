@@ -178,7 +178,7 @@ if __name__ == "__main__":
     print(f"DEBUG: Gradio version: {gr.__version__}")
     demo.launch(
         mcp_server=True,
-        share=False,
-        server_name="localhost",
-        server_port=7860,
+        # share=False,
+        # server_name="localhost",
+        # server_port=7860,
     )
