@@ -31,6 +31,8 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "nlohmann/json.hpp"
 
+#include <sdbus-c++/sdbus-c++.h>
+
 namespace ruche_ros2_control
 {
 class ElegooBt2SerialHardware : public hardware_interface::SystemInterface
@@ -42,13 +44,8 @@ struct Config
   std::string left_wheel_name = "";
   std::string right_wheel_name = "";
   std::string device_id = "";
+  std::string if_name = "";
   int timeout_ms = 0;
-};
-  
-struct Wheel
-{
-  std::string name = "";
-  double cmd_vel = 0.0;
 };
 
 public:
@@ -75,9 +72,8 @@ public:
 private:
   // Parameters
   Config cfg_;
-  Wheel wheel_l_;
-  Wheel wheel_r_;
   nlohmann::json json_cmd_;
+  std::unique_ptr<sdbus::IProxy> serviceProxy_;
 };
 
 }  // namespace ruche_ros2_control
