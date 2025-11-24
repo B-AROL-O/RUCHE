@@ -137,9 +137,13 @@ hardware_interface::return_type ElegooBt2SerialHardware::read(
 hardware_interface::return_type ruche_ros2_control ::ElegooBt2SerialHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  
+    // Read controls
+    for (const auto &[name, descr] : joint_command_interfaces_)
+    {
+      json_cmd_[name] = get_command(name);
+    }
   std_msgs::msg::String msg;
-  msg.data = "Write data here!";
+  msg.data = json_cmd_.dump();
   string_pub_->publish(msg);
 
   return hardware_interface::return_type::OK;

@@ -1,7 +1,7 @@
 
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import TwistStamped
+from std_msgs.msg import String
 import asyncio
 from bleak import BleakClient, BleakScanner
 import threading
@@ -41,7 +41,7 @@ class RosBluetoothBridge(Node):
         config.result()
 
         self.subscription = self.create_subscription(
-            TwistStamped,
+            String,
             topic,
             self.listener_callback,
             10)
@@ -76,12 +76,11 @@ class RosBluetoothBridge(Node):
     def listener_callback(self, msg):
         if (not self.running_):
             self.get_logger().info(
-                f"Sending: {msg.twist}"
+                f"Sending: {msg.data}"
             )
-            TwistStamped.twist
             self.running_ = True
             asyncio.run_coroutine_threadsafe(
-                self.send_string(msg.twist),
+                self.send_string(msg.data),
                 self.loop_
             )
         else:
