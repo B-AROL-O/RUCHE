@@ -29,6 +29,8 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+#include "std_msgs/msg/string.hpp"
+
 namespace ruche_ros2_control
 {
 hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
@@ -46,6 +48,11 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
   cfg_.right_wheel_name = info_.hardware_parameters["right_wheel_name"];
   cfg_.device_id = info_.hardware_parameters["device_id"];
   cfg_.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
+
+  // Initialize publisher node
+  node_ = rclcpp::Node::make_shared("hardware_interface_publisher_node");
+  string_pub_ = node_->create_publisher<std_msgs::msg::String>("hardware_interface_command", 10);
+
 
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
   {
@@ -130,6 +137,10 @@ hardware_interface::return_type ElegooBt2SerialHardware::read(
 hardware_interface::return_type ruche_ros2_control ::ElegooBt2SerialHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
+  
+  std_msgs::msg::String msg;
+  msg.data = "Write data here!";
+  string_pub_->publish(msg);
 
   return hardware_interface::return_type::OK;
 }

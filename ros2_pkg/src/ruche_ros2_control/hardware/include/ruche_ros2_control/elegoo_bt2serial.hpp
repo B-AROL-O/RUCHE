@@ -31,6 +31,8 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "nlohmann/json.hpp"
 
+#include "std_msgs/msg/string.hpp"
+
 namespace ruche_ros2_control
 {
 class ElegooBt2SerialHardware : public hardware_interface::SystemInterface
@@ -65,6 +67,10 @@ public:
 
   hardware_interface::return_type write(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
+
+  // Define publisher fot the bluetooth bridge
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr string_pub_;
+  rclcpp::Node::SharedPtr node_;
 
 private:
   // Parameters
