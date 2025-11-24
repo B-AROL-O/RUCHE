@@ -44,12 +44,6 @@ struct Config
   std::string device_id = "";
   int timeout_ms = 0;
 };
-  
-struct Wheel
-{
-  std::string name = "";
-  double cmd_vel = 0.0;
-};
 
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(ElegooBt2SerialHardware)

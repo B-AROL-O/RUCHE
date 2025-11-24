@@ -47,11 +47,6 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
   cfg_.device_id = info_.hardware_parameters["device_id"];
   cfg_.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
 
-  wheel_l_.name = cfg_.left_wheel_name;
-  wheel_r_.name = cfg_.right_wheel_name;
-
-
-
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
   {
     // DiffBotSystem has exactly two states and one command interface on each joint
@@ -105,8 +100,7 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_activate(
     set_command(name, get_state(name));
   }
 
-  RCLCPP_INFO(get_logger(), "Connecting to the robot ...please wait...");
-  // TODO: open bluetooth connection
+  // The commands are bridged directly to the bluetooth device
 
   RCLCPP_INFO(get_logger(), "Successfully activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -136,13 +130,7 @@ hardware_interface::return_type ElegooBt2SerialHardware::read(
 hardware_interface::return_type ruche_ros2_control ::ElegooBt2SerialHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // Read controls
-  for (const auto & [name, descr] :joint_command_interfaces_)
-  {
-    json_cmd_[name] = get_command(name);
-  }
-  // TODO: remove this!
-  RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "\r\nCommands received: %s", json_cmd_.dump().c_str());
+
   return hardware_interface::return_type::OK;
 }
 
