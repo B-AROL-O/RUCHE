@@ -47,7 +47,7 @@ def generate_launch_description():
 
     # Compute file names
     controllers_name = [robot_name, '_controllers.yaml']
-    urdf_name = [robot_name, '.urdf.xacro']
+    urdf_name = 'robot.urdf.xacro'
 
     #################
     # Node settings #

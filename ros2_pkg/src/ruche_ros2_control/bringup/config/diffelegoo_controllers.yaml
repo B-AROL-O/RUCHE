@@ -12,8 +12,8 @@ base_controller:
     left_wheel_names: ["wheel_l_joint"]
     right_wheel_names: ["wheel_r_joint"]
 
-    wheel_separation: 0.25
-    wheel_radius: 0.05
+    wheel_separation: 0.126
+    wheel_radius: 0.0325
 
     odom_frame_id: odom
     base_frame_id: base_link

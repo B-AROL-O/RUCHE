@@ -49,7 +49,7 @@ source install/setup.bash
 Launch!
 
 ```sh
-ros2 launch ruche_ros2_control diffelegoo.launch.py robot_name:=diffelegoo simulate:=true
+ros2 launch ruche_ros2_control robot.launch.py robot_name:=diffelegoo simulate:=true
 ```
 
 > Note: If you want to run the package for the real hardware, change the argument to `simulate:=false`.
