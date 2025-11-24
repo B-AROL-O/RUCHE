@@ -97,6 +97,38 @@ Create a local Development Environment with the following steps:
 
 ## Tips for contributors
 
+### Viewing and modifying Excalidraw diagrams
+
+The RUCHE codebase contains a few `*.excalidraw.json` files, which are diagrams created using the [Excalidraw](https://excalidraw.com/) tool.
+
+To view or modify the diagrams you have several options as detailed below.
+
+#### Use the Excalidraw online tool
+
+From your preferred browser, open <https://excalidraw.com/>, then click the "Hamburger" icon at the top left of the page and select the **Open** menu.
+
+Locate the `*.excalidraw.json` file on your file system, or download it first. The diagram will then be displayed on your browser.
+
+From Excalidraw you will then have several options, such as exporting the diagram as a `*.png` or `*.svg` file, modifying the diagram, saving the file after the diagram was modified, etc.
+
+#### Use the Excalidraw Extension inside Visual Studio Code
+
+If you are browsing the RUCHE codebase inside Visual Studio Code, make sure you have the [Excalidraw VS Code Extension](https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor) installed.
+
+**NOTE**: The extension is already pre-installed in the RUCHE Dev Container.
+
+Right click the file `*.excalidraw.json` > **Open With...**, then select the **Excalidraw** editor.
+
+#### Use the Excalidraw Extension inside vscode.dev
+
+If you are browsing the RUCHE codebase from <https://vscode.dev>, make sure you have the [Excalidraw VS Code Extension](https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor) installed.
+
+Right click the file `*.excalidraw.json` > **Open With...**, then select the **Excalidraw** editor.
+
+#### Additional help with Excalidraw
+
+For more specific help about how to use Excalidraw, please refer to the documentation available at <https://docs.excalidraw.com/>.
+
 ### Knowing Super-Linter
 
 The RUCHE project has strict code rules, which are enforced with [Super-Linter](https://github.com/super-linter/super-linter).
