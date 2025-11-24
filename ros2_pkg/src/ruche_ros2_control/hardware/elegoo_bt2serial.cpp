@@ -46,8 +46,6 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
   // Read parameters from the xml
   cfg_.left_wheel_name = info_.hardware_parameters["left_wheel_name"];
   cfg_.right_wheel_name = info_.hardware_parameters["right_wheel_name"];
-  cfg_.device_id = info_.hardware_parameters["device_id"];
-  cfg_.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
 
   // Initialize publisher node
   node_ = rclcpp::Node::make_shared("hardware_interface_publisher_node");

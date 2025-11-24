@@ -43,8 +43,6 @@ struct Config
 {
   std::string left_wheel_name = "";
   std::string right_wheel_name = "";
-  std::string device_id = "";
-  int timeout_ms = 0;
 };
 
 public:
