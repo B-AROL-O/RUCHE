@@ -69,8 +69,6 @@ public:
 private:
   // Parameters
   Config cfg_;
-  Wheel wheel_l_;
-  Wheel wheel_r_;
   nlohmann::json json_cmd_;
 };
 
