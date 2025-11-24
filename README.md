@@ -113,7 +113,7 @@ From Excalidraw you will then have several options, such as exporting the diagra
 
 #### Use the Excalidraw Extension inside Visual Studio Code
 
-If you are browsing the RUCHE codebase inside Visual Studio Code, make sure you have the [Excalidraw VS Code Extension](https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor) installed.
+If you are browsing the RUCHE codebase inside Visual Studio Code, make sure you have the [Excalidraw Extension](https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor) installed.
 
 **NOTE**: The extension is already pre-installed in the RUCHE Dev Container.
 
@@ -121,7 +121,7 @@ Right click the file `*.excalidraw.json` > **Open With...**, then select the **E
 
 #### Use the Excalidraw Extension inside vscode.dev
 
-If you are browsing the RUCHE codebase from <https://vscode.dev>, make sure you have the [Excalidraw VS Code Extension](https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor) installed.
+If you are browsing the RUCHE codebase from <https://vscode.dev>, make sure you have the Visual Studio Code [Excalidraw Extension](https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor) installed.
 
 Right click the file `*.excalidraw.json` > **Open With...**, then select the **Excalidraw** editor.
 
