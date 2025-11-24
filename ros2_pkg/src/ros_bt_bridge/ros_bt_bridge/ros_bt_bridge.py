@@ -5,6 +5,12 @@ from std_msgs.msg import String
 import asyncio
 from bleak import BleakClient, BleakScanner
 import threading
+import json
+
+
+def format_string(msg: str) -> str:
+    data = json.loads(msg)
+    return f"vl:{data['v_l']:05.2f};vr:{data['v_r']:05.2f}"
 
 
 class RosBluetoothBridge(Node):
@@ -74,13 +80,14 @@ class RosBluetoothBridge(Node):
         self.running_ = False
 
     def listener_callback(self, msg):
+        formatted_msg = format_string(msg.data)
         if (not self.running_):
             self.get_logger().info(
-                f"Sending: {msg.data}"
+                f"Sending: {formatted_msg}"
             )
             self.running_ = True
             asyncio.run_coroutine_threadsafe(
-                self.send_string(msg.data),
+                self.send_string(formatted_msg),
                 self.loop_
             )
         else:

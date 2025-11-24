@@ -137,10 +137,21 @@ hardware_interface::return_type ElegooBt2SerialHardware::read(
 hardware_interface::return_type ruche_ros2_control ::ElegooBt2SerialHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
+    double v;
     // Read controls
     for (const auto &[name, descr] : joint_command_interfaces_)
     {
-      json_cmd_[name] = get_command(name);
+      v = get_command(name);
+
+      // send left message
+      if (name.rfind(cfg_.left_wheel_name, 0) == 0)
+      {
+        json_cmd_["v_l"] = v;
+      }
+      else if (name.rfind(cfg_.right_wheel_name, 0) == 0)
+      {
+        json_cmd_["v_r"] = v;
+      }
     }
   std_msgs::msg::String msg;
   msg.data = json_cmd_.dump();

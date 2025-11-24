@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools', 'rclpy', 'bleak'],
+    install_requires=['setuptools', 'rclpy', 'json', 'bleak'],
     zip_safe=True,
     maintainer='ggn0',
     maintainer_email='luigi.s1994@gmail.com',
