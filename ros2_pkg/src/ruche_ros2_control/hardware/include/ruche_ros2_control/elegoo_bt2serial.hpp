@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROS2_CONTROL_BLUETOOTH_SERIAL_INTERFACE_
-#define ROS2_CONTROL_BLUETOOTH_SERIAL_INTERFACE_
+#ifndef ROS2_PKG_SRC_RUCHE_ROS2_CONTROL_HARDWARE_INCLUDE_RUCHE_ROS2_CONTROL_ELEGOO_BT2SERIAL_HPP_
+#define ROS2_PKG_SRC_RUCHE_ROS2_CONTROL_HARDWARE_INCLUDE_RUCHE_ROS2_CONTROL_ELEGOO_BT2SERIAL_HPP_
 
 #include <memory>
 #include <string>
@@ -23,54 +23,51 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
+#include "nlohmann/json.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "nlohmann/json.hpp"
 
 #include "std_msgs/msg/string.hpp"
 
-namespace ruche_ros2_control
-{
-class ElegooBt2SerialHardware : public hardware_interface::SystemInterface
-{
+namespace ruche_ros2_control {
+class ElegooBt2SerialHardware : public hardware_interface::SystemInterface {
+  // Structure to store config parameters and wheel data
+  struct Config {
+    std::string left_wheel_name = "";
+    std::string right_wheel_name = "";
+  };
 
-// Structure to store config parameters and wheel data
-struct Config
-{
-  std::string left_wheel_name = "";
-  std::string right_wheel_name = "";
-};
-
-public:
+ public:
   RCLCPP_SHARED_PTR_DEFINITIONS(ElegooBt2SerialHardware)
 
-  hardware_interface::CallbackReturn on_init(
-    const hardware_interface::HardwareComponentInterfaceParams & params) override;
+  hardware_interface::CallbackReturn
+  on_init(const hardware_interface::HardwareComponentInterfaceParams &params)
+      override;
 
-  hardware_interface::CallbackReturn on_configure(
-    const rclcpp_lifecycle::State & previous_state) override;
+  hardware_interface::CallbackReturn
+  on_configure(const rclcpp_lifecycle::State &previous_state) override;
 
-  hardware_interface::CallbackReturn on_activate(
-    const rclcpp_lifecycle::State & previous_state) override;
+  hardware_interface::CallbackReturn
+  on_activate(const rclcpp_lifecycle::State &previous_state) override;
 
-  hardware_interface::CallbackReturn on_deactivate(
-    const rclcpp_lifecycle::State & previous_state) override;
+  hardware_interface::CallbackReturn
+  on_deactivate(const rclcpp_lifecycle::State &previous_state) override;
 
-  hardware_interface::return_type read(
-    const rclcpp::Time & time, const rclcpp::Duration & period) override;
+  hardware_interface::return_type read(const rclcpp::Time &time,
+                                       const rclcpp::Duration &period) override;
 
-  hardware_interface::return_type write(
-    const rclcpp::Time & time, const rclcpp::Duration & period) override;
+  hardware_interface::return_type
+  write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
   // Define publisher fot the bluetooth bridge
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr string_pub_;
   rclcpp::Node::SharedPtr node_;
 
-private:
+ private:
   // Parameters
   Config cfg_;
   nlohmann::json json_cmd_;
@@ -78,4 +75,4 @@ private:
 
 }  // namespace ruche_ros2_control
 
-#endif  // ROS2_CONTROL_BLUETOOTH_SERIAL_INTERFACE_
+#endif  // ROS2_PKG_SRC_RUCHE_ROS2_CONTROL_HARDWARE_INCLUDE_RUCHE_ROS2_CONTROL_ELEGOO_BT2SERIAL_HPP_ // NOLINT

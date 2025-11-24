@@ -16,14 +16,13 @@
 // . is install/pkg_name/shared/.
 #include "ruche_ros2_control/elegoo_bt2serial.hpp"
 
-#include <chrono>
 #include <cmath>
-#include <limits>
-#include <memory>
-#include <vector>
 #include <cstddef>
 #include <iomanip>
+#include <limits>
+#include <memory>
 #include <sstream>
+#include <vector>
 
 #include "hardware_interface/lexical_casts.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
@@ -31,15 +30,11 @@
 
 #include "std_msgs/msg/string.hpp"
 
-namespace ruche_ros2_control
-{
+namespace ruche_ros2_control {
 hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
-  const hardware_interface::HardwareComponentInterfaceParams & params)
-{
-  if (
-    hardware_interface::SystemInterface::on_init(params) !=
-    hardware_interface::CallbackReturn::SUCCESS)
-  {
+    const hardware_interface::HardwareComponentInterfaceParams &params) {
+  if (hardware_interface::SystemInterface::on_init(params) !=
+      hardware_interface::CallbackReturn::SUCCESS) {
     return hardware_interface::CallbackReturn::ERROR;
   }
 
@@ -49,59 +44,54 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
 
   // Initialize publisher node
   node_ = rclcpp::Node::make_shared("hardware_interface_publisher_node");
-  string_pub_ = node_->create_publisher<std_msgs::msg::String>("hardware_interface_command", 10);
+  string_pub_ = node_->create_publisher<std_msgs::msg::String>(
+      "hardware_interface_command", 10);
 
-
-  for (const hardware_interface::ComponentInfo & joint : info_.joints)
-  {
-    // DiffBotSystem has exactly two states and one command interface on each joint
-    if (joint.command_interfaces.size() != 1)
-    {
-      RCLCPP_FATAL(
-        get_logger(), "Joint '%s' has %zu command interfaces found. 1 expected.",
-        joint.name.c_str(), joint.command_interfaces.size());
+  for (const hardware_interface::ComponentInfo &joint : info_.joints) {
+    // On each joint, DiffBotSystem has:
+    // - two states
+    // - one command interface
+    if (joint.command_interfaces.size() != 1) {
+      RCLCPP_FATAL(get_logger(),
+                   "Joint '%s' has %zu command interfaces found. 1 expected.",
+                   joint.name.c_str(), joint.command_interfaces.size());
       return hardware_interface::CallbackReturn::ERROR;
     }
 
-    if (joint.command_interfaces[0].name != hardware_interface::HW_IF_VELOCITY)
-    {
+    if (joint.command_interfaces[0].name !=
+        hardware_interface::HW_IF_VELOCITY) {
       RCLCPP_FATAL(
-        get_logger(), "Joint '%s' have %s command interfaces found. '%s' expected.",
-        joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
-        hardware_interface::HW_IF_VELOCITY);
+          get_logger(),
+          "Joint '%s' have %s command interfaces found. '%s' expected.",
+          joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
+          hardware_interface::HW_IF_VELOCITY);
       return hardware_interface::CallbackReturn::ERROR;
     }
-
   }
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_configure(
-  const rclcpp_lifecycle::State & /*previous_state*/)
-{
+    const rclcpp_lifecycle::State & /*previous_state*/) {
   RCLCPP_INFO(get_logger(), "Configuring ...please wait...");
 
   // reset values always when configuring hardware
-  for (const auto & [name, descr] : joint_command_interfaces_)
-  {
+  for (const auto &[name, descr] : joint_command_interfaces_) {
     set_command(name, 0.0);
   }
-  
-  
+
   RCLCPP_INFO(get_logger(), "Successfully configured!");
-  
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_activate(
-  const rclcpp_lifecycle::State & /*previous_state*/)
-{
+    const rclcpp_lifecycle::State & /*previous_state*/) {
   RCLCPP_INFO(get_logger(), "Activating ...please wait...");
 
   // command and state should be equal when starting
-  for (const auto & [name, descr] : joint_command_interfaces_)
-  {
+  for (const auto &[name, descr] : joint_command_interfaces_) {
     set_command(name, get_state(name));
   }
 
@@ -112,45 +102,38 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_activate(
 }
 
 hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_deactivate(
-  const rclcpp_lifecycle::State & /*previous_state*/)
-{
+    const rclcpp_lifecycle::State & /*previous_state*/) {
   RCLCPP_INFO(get_logger(), "Deactivating ...please wait...");
 
   RCLCPP_INFO(get_logger(), "Connecting to the robot ...please wait...");
-  // TODO: close bluetooth connection
 
   RCLCPP_INFO(get_logger(), "Successfully deactivated!");
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type ElegooBt2SerialHardware::read(
-  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
-{
-
+hardware_interface::return_type
+ElegooBt2SerialHardware::read(const rclcpp::Time & /*time*/,
+                              const rclcpp::Duration & /*period*/) {
   // No feedback from robot. Otherwise the states are read here
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type ruche_ros2_control ::ElegooBt2SerialHardware::write(
-  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
-{
-    double v;
-    // Read controls
-    for (const auto &[name, descr] : joint_command_interfaces_)
-    {
-      v = get_command(name);
+hardware_interface::return_type
+ElegooBt2SerialHardware::write(const rclcpp::Time & /*time*/,
+                               const rclcpp::Duration & /*period*/) {
+  double v;
+  // Read controls
+  for (const auto &[name, descr] : joint_command_interfaces_) {
+    v = get_command(name);
 
-      // send left message
-      if (name.rfind(cfg_.left_wheel_name, 0) == 0)
-      {
-        json_cmd_["v_l"] = v;
-      }
-      else if (name.rfind(cfg_.right_wheel_name, 0) == 0)
-      {
-        json_cmd_["v_r"] = v;
-      }
+    // send left message
+    if (name.rfind(cfg_.left_wheel_name, 0) == 0) {
+      json_cmd_["v_l"] = v;
+    } else if (name.rfind(cfg_.right_wheel_name, 0) == 0) {
+      json_cmd_["v_r"] = v;
     }
+  }
   std_msgs::msg::String msg;
   msg.data = json_cmd_.dump();
   string_pub_->publish(msg);
@@ -161,5 +144,5 @@ hardware_interface::return_type ruche_ros2_control ::ElegooBt2SerialHardware::wr
 }  // namespace ruche_ros2_control
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(
-  ruche_ros2_control::ElegooBt2SerialHardware, hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(ruche_ros2_control::ElegooBt2SerialHardware,
+                       hardware_interface::SystemInterface)

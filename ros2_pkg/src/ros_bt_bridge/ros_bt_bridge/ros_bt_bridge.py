@@ -70,7 +70,6 @@ class RosBluetoothBridge(Node):
 
     async def send_string(self, string):
         if self.client_.is_connected:
-            self.get_logger().info(f"Using UUID: {self.char_uuid_}")
             await self.client_.write_gatt_char(
                 self.char_uuid_,
                 string.encode()
