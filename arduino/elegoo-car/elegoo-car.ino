@@ -63,6 +63,8 @@
 #define BLINK_DURATION_MS 1000
 #define BLINK_INTERVAL_MS 200
 
+#define MIN_SPEED_TRESH 127
+
 // -------------------- Globals --------------------
 Servo servoMotor;
 
@@ -166,26 +168,50 @@ void updateLedBlink() {
     }
 }
 
+uint8_t mapSpeedToByte(float s) {
+  // remap [-10, +10] to [128, 255] (+/- is just direction of rotation),
+  // which avoids dead zone [0, 127] where wheels barely move.
+
+  if (s < 0) {
+    s = -s;
+  }
+  // remap [0, 10] to [128, 255]
+  // int range = 255 - 128; // = 127
+  // float factor = (float)range / 10.0; // = 12.7
+  uint8_t mapped = 12.7 * s + 128; 
+  return mapped;
+}
+
 // -------------------- Command Handling --------------------
 void handleCommand(String cmd) {
   char c = cmd[0];
   switch (c) {
     case 'v':
       // should match vl:00.00;vr:00.00
-      if (cmd.length() < 17) {
+      // TODO: support also negative speeds
+      if (cmd.length() < 17 || cmd[8] != ';') {
         Serial.println("INV_CMD");
         break;
       }
 
-      if (cmd[8] != ';') {
-        Serial.println("INV_CMD");
+      float vl = cmd.substring(3, 8).toFloat();
+      if (vl > 10 || vl < -10) {
+        Serial.println("INV_VL");
+        break;
+      }
+      float vr = cmd.substring(12).toFloat();
+      if (vr > 10 || vr < -10) {
+        Serial.println("INV_VR");
         break;
       }
 
-      String vlStr = cmd.substring(3, 7);
-      Serial.println(vlStr);
-      String vrStr = cmd.substring(12, 16);
-      Serial.println(vrStr);
+      uint8_t b_vl = mapSpeedToByte(vl);      
+      uint8_t b_vr = mapSpeedToByte(vr);
+
+      Serial.println(b_vl);
+      Serial.println(b_vr);
+      
+      // TODO: set motors' speed
       break;
 
     case 'f':
@@ -271,7 +297,6 @@ void loop() {
   // Read incoming command
   if (Serial.available()) {
     String cmd = Serial.readStringUntil('\n');
-    Serial.println(cmd);
     handleCommand(cmd);
   }
 
