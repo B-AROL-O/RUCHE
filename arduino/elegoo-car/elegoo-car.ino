@@ -29,6 +29,7 @@
 */
 
 #include <Servo.h>
+#include <SoftwareSerial.h>
 
 // -------------------- Pin Definitions --------------------
 #define LED_PIN 13
@@ -62,13 +63,6 @@
 #define BLINK_DURATION_MS 1000
 #define BLINK_INTERVAL_MS 200
 
-#define MIN_SPEED 120
-#define MAX_SPEED 255
-
-#define CMD_MOTOR_BOTH = 0
-#define CMD_MOTOR_A = 1
-#define CMD_MOTOR_B = 2
-
 // -------------------- Globals --------------------
 Servo servoMotor;
 
@@ -88,69 +82,9 @@ void initMotors() {
   pinMode(ENB, OUTPUT); pinMode(B1, OUTPUT); pinMode(B2, OUTPUT);
 }
 
-/**
-* Speed of the car is between 0 and 255, but under 120 the car
-* doesn't actually move, so the input speed coming from the
-* commands (0-255) are re-mapped from 120 to 255.
-*/
-uint8_t mapMotorSpeed(uint8_t inputSpeed) {
-  return MIN_SPEED + inputSpeed / (MAX_SPEED-MIN_SPEED);
-}
-
-void setMotorSpeed(uint8_t motor, uint8_t speed) {
-  if (motor == CMD_MOTOR_BOTH) {
-    analogWrite(ENA, speed);
-    analogWrite(ENB, speed);
-  } else if (motor == CMD_MOTOR_A) {
-    analogWrite(ENA, speed);
-  } else if (motor == CMD_MOTOR_B) {
-    analogWrite(ENB, speed);
-  }
-}
-
-void singleMotorForward(uint8_t motor) {
-  if (motor == CMD_MOTOR_BOTH) {
-    digitalWrite(A1, HIGH);
-    digitalWrite(A2, LOW);
-    digitalWrite(B1, LOW);
-    digitalWrite(B2, HIGH);
-  } else if (motor == CMD_MOTOR_A) {
-    digitalWrite(A1, HIGH);
-    digitalWrite(A2, LOW);
-  } else if (motor == CMD_MOTOR_B) {
-    digitalWrite(B1, LOW);
-    digitalWrite(B2, HIGH);
-  }
-}
-
-void singleMotorBackward(uint8_t motor) {
-  if (motor == CMD_MOTOR_BOTH) {
-    digitalWrite(A1, LOW);
-    digitalWrite(A2, HIGH);
-    digitalWrite(B1, HIGH);
-    digitalWrite(B2, LOW);
-  } else if (motor == CMD_MOTOR_A) {
-    digitalWrite(A1, LOW);
-    digitalWrite(A2, HIGH);
-  } else if (motor == CMD_MOTOR_B) {
-    digitalWrite(B1, HIGH);
-    digitalWrite(B2, LOW);
-  }
-}
-
-void singleMotorStop(uint8_t motor) {
-  if (motor == CMD_MOTOR_BOTH) {
-    digitalWrite(A1, HIGH);
-    digitalWrite(A2, HIGH);
-    digitalWrite(B1, HIGH);
-    digitalWrite(B2, HIGH);
-  } else if (motor == CMD_MOTOR_A) {
-    digitalWrite(A1, HIGH);
-    digitalWrite(A2, HIGH);
-  } else if (motor == CMD_MOTOR_B) {
-    digitalWrite(B1, HIGH);
-    digitalWrite(B2, HIGH);
-  }
+void setMotorSpeed(uint8_t speed) {
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
 }
 
 void motorForward() {
@@ -189,6 +123,24 @@ int getDistanceCm() {
   return duration / 58;
 }
 
+void sweepScan() {
+  // NOTE: can be inconsistent when distance is over 90-100cm 
+  servoMotor.write(0);
+  delay(100); // just in case it was on the complete opposite direction
+  for (int angle = 0; angle <= 180; angle += 30) {
+    servoMotor.write(angle);
+    delay(100);    
+    int d = getDistanceCm();
+    Serial.print("{angle:");
+    Serial.print(angle);
+    Serial.print(",dist:");
+    Serial.print(d);
+    Serial.println("}");
+  }
+  servoMotor.write(90);
+  delay(2);
+}
+
 void startBlinking() {
   ledBlinking = true;
   blinkStartTime = millis();
@@ -215,8 +167,27 @@ void updateLedBlink() {
 }
 
 // -------------------- Command Handling --------------------
-void handleCommand(char c) {
+void handleCommand(String cmd) {
+  char c = cmd[0];
   switch (c) {
+    case 'v':
+      // should match vl:00.00;vr:00.00
+      if (cmd.length() < 17) {
+        Serial.println("INV_CMD");
+        break;
+      }
+
+      if (cmd[8] != ';') {
+        Serial.println("INV_CMD");
+        break;
+      }
+
+      String vlStr = cmd.substring(3, 7);
+      Serial.println(vlStr);
+      String vrStr = cmd.substring(12, 16);
+      Serial.println(vrStr);
+      break;
+
     case 'f':
       direction = DIR_FWD;
       if (lastDistance <= OBSTACLE_CM) {
@@ -254,6 +225,11 @@ void handleCommand(char c) {
       else motorStop();
       break;
 
+    case 'S':
+      direction = DIR_STOP;
+      motorStop();
+      sweepScan();
+      break;
     default:
       break;
   }
@@ -281,8 +257,8 @@ void loop() {
   int dist = getDistanceCm(); 
   if (dist != lastDistance) {
     lastDistance = dist;
-    Serial.print("f ");
-    Serial.println(lastDistance);
+    // Serial.print("f ");
+    // Serial.println(lastDistance);
   }
 
   // Stop if obstacle too close
@@ -294,7 +270,8 @@ void loop() {
 
   // Read incoming command
   if (Serial.available()) {
-    cmd = Serial.read();
+    String cmd = Serial.readStringUntil('\n');
+    Serial.println(cmd);
     handleCommand(cmd);
   }
 
@@ -306,4 +283,3 @@ void loop() {
 
   updateLedBlink();
 }
-
