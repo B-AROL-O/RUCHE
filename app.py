@@ -108,7 +108,7 @@ def respond(
 # ============================================================
 
 """
-For information on how to customize the ChatInterface, peruse the gradio docs: https://www.gradio.app/docs/chatinterface
+For information on how to customize the ChatInterface, peruse the gradio docs: https://www.gradio.app/docs/gradio/chatinterface
 """
 
 chatbot = gr.ChatInterface(

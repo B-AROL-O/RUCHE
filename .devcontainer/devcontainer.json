@@ -19,7 +19,7 @@
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "uname -a",
+  "postCreateCommand": "scripts/install_tools.sh",
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
@@ -27,7 +27,8 @@
         "esbenp.prettier-vscode",
         "github.vscode-github-actions",
         "mhutchie.git-graph",
-        "ms-python.black-formatter"
+        "ms-python.black-formatter",
+        "pomdtr.excalidraw-editor"
       ]
     }
   }
