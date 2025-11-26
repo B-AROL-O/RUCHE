@@ -6,6 +6,9 @@ set -e
 npm install -g prettier
 
 # Print Operating System name and version
+# Launch ros2 dependency installation script
+install_ros2_dep.sh
+
 uname -a
 
 # EOF
