@@ -187,30 +187,33 @@ void handleCommand(String cmd) {
   char c = cmd[0];
   switch (c) {
     case 'v':
-      // should match vl:00.00;vr:00.00
+      // should match vl:[-+]?00.00;vr:[-+]00.00
       // TODO: support also negative speeds
-      if (cmd.length() < 17 || cmd[8] != ';') {
+      if (cmd.length() < 17 || cmd.indexOf(';') == -1) {
         Serial.println("INV_CMD");
         break;
       }
 
-      float vl = cmd.substring(3, 8).toFloat();
+      int i = cmd.indexOf(';');
+
+      float vl = cmd.substring(3, i).toFloat();
       if (vl > 10 || vl < -10) {
         Serial.println("INV_VL");
         break;
       }
-      float vr = cmd.substring(12).toFloat();
+
+      float vr = cmd.substring(i+4).toFloat();
       if (vr > 10 || vr < -10) {
         Serial.println("INV_VR");
         break;
       }
 
-      uint8_t b_vl = mapSpeedToByte(vl);      
+      uint8_t b_vl = mapSpeedToByte(vl);
       uint8_t b_vr = mapSpeedToByte(vr);
 
       Serial.println(b_vl);
       Serial.println(b_vr);
-      
+
       // TODO: set motors' speed
       break;
 
