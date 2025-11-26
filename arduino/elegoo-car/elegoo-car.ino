@@ -28,6 +28,8 @@
 * 
 */
 
+#include <string.h>
+
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
@@ -182,31 +184,61 @@ uint8_t mapSpeedToByte(float s) {
   return mapped;
 }
 
+/**
+ * Parses command like:
+ * vl:<float>;vr:<float>
+ * where vr and vl can also be swapped.
+ * Both vr and vl labels (and values) are mandatory.
+ * Floats can be negative or positive and they can be expressed
+ * just as any float in C.
+ */
+bool parseSpeedCommand(char *cmd, float *vl, float *vr) {
+  char *tok = strtok(cmd, ';');
+  uint8_t cnt = 0;
+  bool vlSet = false;
+  bool vrSet = false;
+  while (tok != NULL) {
+    if (++cnt > 2) {
+      return false;
+    }
+    char *colPtr = strchr(tok, ':');
+    if (colPtr == NULL) {
+      return false;
+    }
+    *colPtr = '\0'; // terminate here to obtain label ("vl" or "vr" hopefully)
+    if (strcmp(tok, "vl") == 0) {
+      if (vlSet == true) {
+        return false; // vl found 2 times
+      }
+      *vl = atof(colPtr+1);
+      vlSet = true;
+    } else if (strcmp(tok, "vr") == 0) {
+      if (vrSet == true) {
+        return false; // vr found 2 times
+      }
+      *vr = atof(colPtr+1);
+      vrSet = true;
+    } else {
+      return false; // invalid label
+    }
+  }
+  return vlSet & vrSet;
+}
+
 // -------------------- Command Handling --------------------
 void handleCommand(String cmd) {
   char c = cmd[0];
   switch (c) {
     case 'v':
-      // should match vl:[-+]?00.00;vr:[-+]00.00
-      // TODO: support also negative speeds
-      if (cmd.length() < 17 || cmd.indexOf(';') == -1) {
-        Serial.println("INV_CMD");
+      float vl = 0.0;
+      float vr = 0.0;
+      if (!parseSpeedCommand(cmd.begin(), &vl, &vr)) {
+        Serial.println("INV_SPEED_CMD");
         break;
       }
 
-      int i = cmd.indexOf(';');
-
-      float vl = cmd.substring(3, i).toFloat();
-      if (vl > 10 || vl < -10) {
-        Serial.println("INV_VL");
-        break;
-      }
-
-      float vr = cmd.substring(i+4).toFloat();
-      if (vr > 10 || vr < -10) {
-        Serial.println("INV_VR");
-        break;
-      }
+      Serial.println(vl);
+      Serial.println(vr);
 
       uint8_t b_vl = mapSpeedToByte(vl);
       uint8_t b_vr = mapSpeedToByte(vr);
