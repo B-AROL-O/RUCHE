@@ -53,7 +53,8 @@
         "esbenp.prettier-vscode",
         "github.vscode-github-actions",
         "mhutchie.git-graph",
-        "ms-python.black-formatter"
+        "ms-python.black-formatter",
+        "pomdtr.excalidraw-editor"
       ]
     }
   }
