@@ -1,6 +1,7 @@
 #!/bin/bash
 
-cd ~/workspace/RUCHE/ros2_pkg
+cd /workspaces/RUCHE/ros2_pkg
+apt-get update
 source /opt/ros/jazzy/setup.bash
 rosdep update
 rosdep install --from-paths src/ -y --ignore-src
