@@ -14,7 +14,8 @@
     "-p",
     "6080:80",
     "--name",
-    "ruche-devcontainer"
+    "ruche-devcontainer",
+    "--net=host",
   ],
   "containerEnv": {
     "USER": "vscode",
