@@ -9,7 +9,7 @@ RUN apt update && apt autoremove -y
 RUN apt-get -y install --no-install-recommends tar curl zip unzip
 
 # Install deps for dev environment
-RUN apt-get -y install --no-install-recommends ros-jazzy-ros-gz ros-jazzy-rviz2 python3-rosdep
+RUN apt-get -y install --no-install-recommends ros-jazzy-ros-gz ros-jazzy-rviz2 python3-rosdep nlohmann-json3-dev
 
 RUN useradd -ms /bin/bash $USERNAME
 RUN usermod -aG sudo $USERNAME
