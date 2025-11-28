@@ -67,7 +67,8 @@
 #define BLINK_DURATION_MS 1000
 #define BLINK_INTERVAL_MS 200
 
-#define MIN_SPEED_TRESH 127
+#define MIN_SPEED_TOL 0.01
+#define MAX_SPEED_ABS_VAL 10
 
 // -------------------- Globals --------------------
 Servo servoMotor;
@@ -306,12 +307,15 @@ void handleCommand(String cmd) {
         break;
       }
 
-      if (vl < -10 || vl > 10 || vr < -10 || vr > 10) {
+      if (
+        vl < -MAX_SPEED_ABS_VAL || vl > MAX_SPEED_ABS_VAL ||
+        vr < -MAX_SPEED_ABS_VAL || vr > MAX_SPEED_ABS_VAL
+      ) {
         Serial.println("OUT_OF_RANGE");
         break;
       }
 
-      if (vl > -0.01 && vl < 0.01) {
+      if (vl > -MIN_SPEED_TOL && vl < MIN_SPEED_TOL) {
         // stop motor
         Serial.println("Stop left");
         leftMotorStop();
@@ -329,7 +333,7 @@ void handleCommand(String cmd) {
         }
       }
 
-      if (vr > -0.01 && vr < 0.01) {
+      if (vr > -MIN_SPEED_TOL && vr < MIN_SPEED_TOL) {
         // stop motor
         Serial.println("Stop right");
         rightMotorStop();
