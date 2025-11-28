@@ -306,6 +306,11 @@ void handleCommand(String cmd) {
         break;
       }
 
+      if (vl < -10 || vl > 10 || vr < -10 || vr > 10) {
+        Serial.println("OUT_OF_RANGE");
+        break;
+      }
+
       if (vl > -0.01 && vl < 0.01) {
         // stop motor
         Serial.println("Stop left");
