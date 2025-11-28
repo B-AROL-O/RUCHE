@@ -29,6 +29,18 @@ Incidentally, since [Ruché](https://en.wikipedia.org/wiki/Ruch%C3%A9) is a red 
 An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https://huggingface.co/docs/huggingface_hub/v0.22.2/en/index), and the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index).
 -->
 
+## What the RUCHE project does
+
+<!-- TODO: Update link as soon as @pitdagosti releases the video -->
+
+<p align="center">
+<a href="https://www.youtube.com/watch?v=cWYLJE8ZgHk">
+  <img src="https://img.youtube.com/vi/cWYLJE8ZgHk/0.jpg" alt="FREISA-GPT Demo" width="600"/>
+</a>
+</p>
+
+<!-- TODO: Add textual description -->
+
 ## How to run the RUCHE project
 
 ### Inside the Hugging Face Space
