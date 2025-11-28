@@ -1,12 +1,29 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
-  "name": "Ubuntu",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/base:noble",
+  "name": "RUCHE",
+  "build": {
+    "dockerfile": "./Dockerfile",
+    "context": ".",
+    "args": {
+      "USERNAME": "vscode"
+    }
+  },
+  "runArgs": [
+    "--device=/dev/net/tun",
+    "-p",
+    "6080:80",
+    "--name",
+    "ruche-devcontainer"
+  ],
+  "containerEnv": {
+    "USER": "vscode",
+    "PASSWORD": "vscode"
+  },
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
     "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {},
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git-lfs:1": {},
     "ghcr.io/devcontainers/features/node:1": {},
@@ -17,7 +34,16 @@
     }
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
+  "forwardPorts": [6080, 5901],
+  "portsAttributes": {
+    "6080": {
+      "label": "desktop"
+    },
+    "5901": {
+      "label": "noVNC"
+    }
+  },
+  "postStartCommand": "nohup sudo /bin/bash -c '/entrypoint.sh &' > /tmp/nohup.out",
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "scripts/install_tools.sh",
   // Configure tool-specific properties.
