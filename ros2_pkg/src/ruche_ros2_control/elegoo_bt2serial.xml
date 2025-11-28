@@ -3,7 +3,7 @@
     type="ruche_ros2_control::ElegooBt2SerialHardware" 
     base_class_type="hardware_interface::SystemInterface">
     <description>
-      A simple ros2_control hardware interface to transmis control commands over bluetooth
+      A simple ros2_control hardware interface to transmit control commands over bluetooth
     </description>
   </class>
 </library>

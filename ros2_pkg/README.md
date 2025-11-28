@@ -1,4 +1,4 @@
-# Ros2 control package for RUCHE
+# ROS2 control package for RUCHE
 
 This ROS2 package uses a `ros2_control' controller to control a simulated or real robot for the RUCHE project.
 

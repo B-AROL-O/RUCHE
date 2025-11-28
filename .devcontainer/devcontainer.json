@@ -14,7 +14,11 @@
     "-p",
     "6080:80",
     "--name",
-    "ruche-devcontainer"
+    "ruche-devcontainer",
+    "--net=host",
+    // Uncomment on Linux to share the bluetooth adapter
+    // "--privileged",
+    // "--volume=/var/run/dbus:/var/run/dbus"
   ],
   "containerEnv": {
     "USER": "vscode",
