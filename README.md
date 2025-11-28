@@ -41,6 +41,17 @@ An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https
 
 <!-- TODO: Add textual description -->
 
+## RUCHE System Architecture
+
+![ruche-arch-draft01.png](docs/images/ruche-arch-draft01.png)
+
+<!--
+TODO: One or more paragraph describing the system architecture:
+
+- One subsection per component/container
+- Add text for each component
+ -->
+
 ## How to run the RUCHE project
 
 ### Inside the Hugging Face Space
