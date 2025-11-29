@@ -196,6 +196,16 @@ If Prettier notices some misalignment you can easily reformat them before creati
 prettier -w filename
 ```
 
+## The team behind RUCHE
+
+| Team Member                                                                | GitHub Profile                              | Hugging Face Profile                            |
+|----------------------------------------------------------------------------|---------------------------------------------|-------------------------------------------------|
+| [Alessio Chessa](https://www.linkedin.com/in/alessiochessa/)               | [aleche28](https://github.com/aleche28)     | [aleche28](https://huggingface.co/aleche28)     |
+| [Davide Macario](https://www.linkedin.com/in/gmacario/)                    | [davmacario](https://github.com/davmacario) | [dmacario](https://huggingface.co/dmacario)     |
+| [Gianpaolo Macario](https://www.linkedin.com/in/davide-macario-b872b4225/) | [gmacario](https://github.com/gmacario)     | [gmacario](https://github.com/gmacario)         |
+| [Luigi Scalzone](https://www.linkedin.com/in/luigiscalzone/)               | [GGn0](https://github.com/GGn0)             | [GGn0](https://huggingface.co/GGn0)             |
+| [Pietro D'Agostino](https://www.linkedin.com/in/pietro-d-agostino-phd/)    | [pitdagosti](https://github.com/pitdagosti) | [pitdagosti](https://huggingface.co/pitdagosti) |
+
 ## Copyright and License
 
 Copyright (C) 2025, [B-AROL-O Team](https://github.com/B-AROL-O), all rights reserved.
