@@ -59,6 +59,16 @@ ros2 launch ruche_ros2_control robot.launch.py robot_name:=diffelegoo simulate:=
 >
 > - [ELEGOO robot](#elegoo-robot)
 
+## Testing
+
+After launching the robot of interest, you can test the controller and communication with the following twist command:
+
+```sh
+ros2 topic pub /base_controller/cmd_vel geometry_msgs/msg/TwistStamped "{header: auto, twist: {linear: {x: 0.70}, angular: {z: 1.4}}}"
+```
+
+You should see the robot (real or simulated) moving in a circular pattern
+
 ## Robots
 
 The following section assumes you have already built the packages without errors following the previous instructions.
@@ -73,7 +83,7 @@ Since it is possible to directly control only two of the wheels, it has been mod
 
 #### ELEGOO launch commands
 
-Open two terminals and run the following commands to launch the controller and brigde
+Open two terminals and run the following commands to launch the controller and bridge
 
 In terminal 1:
 
