@@ -14,9 +14,11 @@ license: mit
 short_description: ROS2-based Unified Control for Hugging-face Embodied-agents
 ---
 
-## RUCHE
+<!-- ## RUCHE -->
 
-![ruche_logo_robot.jpg](docs/images/ruche_logo_robot.jpg)
+![ruche_logo.png](docs/images/ruche_logo.png)
+
+<!-- ![ruche_logo_robot.png](docs/images/ruche_logo_robot.png) -->
 
 Project **RUCHE** (acronym of **R**OS2-based **U**nified **C**ontrol for **H**ugging-face **E**mbodied-agents) is a project developed by the [B-AROL-O Team](https://github.com/B-AROL-O) in response to "[MCP'st 1st Birthday](https://huggingface.co/MCP-1st-Birthday)" Hackathon.
 This Hackathon is hosted by [Anthropic](https://www.anthropic.com/) and [Gradio](https://www.gradio.app/) with additional support from [Hugging Face](https://huggingface.co/), [OpenAI](https://openai.com/), [Gemini](https://gemini.google.com/), [Modal](https://modal.com/), [Sambanova](https://sambanova.ai/), [ElevenLabs](https://elevenlabs.io/), [Blaxel](https://blaxel.ai/), [Llamaindex](https://www.llamaindex.ai/) and [Nebius](https://nebius.com/).
@@ -28,6 +30,29 @@ Incidentally, since [Ruché](https://en.wikipedia.org/wiki/Ruch%C3%A9) is a red 
 <!-- From <https://huggingface.co/spaces/gradio-templates/chatbot>
 An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https://huggingface.co/docs/huggingface_hub/v0.22.2/en/index), and the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index).
 -->
+
+## What the RUCHE project does
+
+<!-- TODO: Update link as soon as @pitdagosti releases the video -->
+
+<p align="center">
+<a href="https://www.youtube.com/watch?v=cWYLJE8ZgHk">
+  <img src="https://img.youtube.com/vi/cWYLJE8ZgHk/0.jpg" alt="FREISA-GPT Demo" width="600"/>
+</a>
+</p>
+
+<!-- TODO: Add textual description -->
+
+## RUCHE System Architecture
+
+![ruche-arch-draft01.png](docs/images/ruche-arch-draft01.png)
+
+<!--
+TODO: One or more paragraph describing the system architecture:
+
+- One subsection per component/container
+- Add text for each component
+ -->
 
 ## How to run the RUCHE project
 
