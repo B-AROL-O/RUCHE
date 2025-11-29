@@ -14,7 +14,7 @@ license: mit
 short_description: ROS2-based Unified Control for Hugging-face Embodied-agents
 ---
 
-## RUCHE
+<!-- ## RUCHE -->
 
 ![ruche_logo.png](docs/images/ruche_logo.png)
 
