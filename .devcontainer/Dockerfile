@@ -13,9 +13,13 @@ ENV DEBIAN_FRONTEND="noninteractive"
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
-    tar curl zip unzip \
-    ros-jazzy-ros-gz ros-jazzy-rviz2 \ 
-    python3-rosdep nlohmann-json3-dev && \
+        tar curl zip unzip \
+        python3-rosdep \
+        nlohmann-json3-dev && \
+    apt-get -y install --no-install-recommends \
+        ros-jazzy-ros-gz && \
+    apt-get -y install --no-install-recommends \
+        ros-jazzy-rviz2 && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
