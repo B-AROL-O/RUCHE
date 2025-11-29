@@ -10,7 +10,7 @@ ARG USERNAME="vscode"
 ENV DEBIAN_FRONTEND="noninteractive"
 
 # Install dependencies
-# hadolint ignore=DL3009
+# hadolint ignore=DL3008,DL3009
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
         tar curl zip unzip \
