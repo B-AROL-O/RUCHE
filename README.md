@@ -12,6 +12,16 @@ hf_oauth_scopes:
   - inference-api
 license: mit
 short_description: ROS2-based Unified Control for Hugging-face Embodied-agents
+tags:
+  - building-mcp-track-enterprise
+  - building-mcp-track-consumer
+  - building-mcp-track-creative
+  - mcp-in-action-track-enterprise
+  - mcp-in-action-track-consumer
+  - mcp-in-action-track-creative
+  - mcp-1st-birthday
+  - robotics
+  - ros2
 ---
 
 <!-- ## RUCHE -->
