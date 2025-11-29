@@ -3,11 +3,11 @@
 # FROM ghcr.io/tiryoh/ros2-desktop-vnc:jazzy
 FROM ghcr.io/tiryoh/ros2-desktop-vnc:jazzy-20251124T0218
 
-LABEL org.opencontainers.image.description "RUCHE Dev Container (based on tiryoh/ros2-desktop-vnc)"
+LABEL org.opencontainers.image.description="RUCHE Dev Container (based on tiryoh/ros2-desktop-vnc)"
 
-ARG USERNAME
+ARG USERNAME="vscode"
 # USER root
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND="noninteractive"
 
 # Install dependencies
 # hadolint ignore=DL3008
@@ -20,6 +20,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # User handling
+# hadolint ignore=DL4006
 RUN useradd -ms /bin/bash "$USERNAME" && \
     usermod -aG sudo "$USERNAME" && \
     mkdir -p "/etc/sudoers.d" && \
