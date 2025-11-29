@@ -22,26 +22,23 @@ if MOCK_ROS:
     class Node:
         def __init__(self, name):
             self.name = name
-
         def create_publisher(self, msg_type, topic, queue_size):
             return self
-
         def publish(self, msg):
             print(f"[MOCK ROS] Publishing: linear={msg.twist.linear.x}, angular={msg.twist.angular.z}")
-
         def create_rate(self, hz):
             class Rate:
                 def sleep(self): time.sleep(0.1)
             return Rate()
-
         def get_clock(self):
             class Clock:
                 def now(self):
                     class Time:
-                        def __init__(self):
+                        def seconds_nanoseconds(self):
                             t = time.time()
-                            self.seconds = int(t)
-                            self.nanoseconds = int((t - int(t)) * 1e9)
+                            seconds = int(t)
+                            nanoseconds = int((t - int(t)) * 1e9)
+                            return (seconds, nanoseconds)
                     return Time()
             return Clock()
 
@@ -66,24 +63,17 @@ class RobotPublisher(Node):
         super().__init__('gradio_robot_controller')
         self.pub = self.create_publisher(TwistStamped, '/base_controller/cmd_vel', 10)
 
-    def seconds_nanoseconds(self):
-        """
-        Returns current time as (seconds, nanoseconds)
-        """
-        now = self.get_clock().now()
-        return now.seconds, now.nanoseconds
-
     def send_twist(self, linear_x=0.0, angular_z=0.0, duration=1.0):
         twist_msg = TwistStamped()
         twist_msg.twist.linear.x = linear_x
         twist_msg.twist.angular.z = angular_z
 
-        sec, nsec = self.seconds_nanoseconds()
+        sec, nsec = self.get_clock().now().seconds_nanoseconds()
         start_time = sec + nsec / 1e9
 
         rate = self.create_rate(10)
         while True:
-            sec, nsec = self.seconds_nanoseconds()
+            sec, nsec = self.get_clock().now().seconds_nanoseconds()
             current_time = sec + nsec / 1e9
             if current_time - start_time >= duration:
                 break
