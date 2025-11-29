@@ -33,6 +33,8 @@
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
+#define DEBUG 0
+
 // -------------------- Pin Definitions --------------------
 #define LED_PIN 13
 
@@ -65,7 +67,8 @@
 #define BLINK_DURATION_MS 1000
 #define BLINK_INTERVAL_MS 200
 
-#define MIN_SPEED_TRESH 127
+#define MIN_SPEED_TOL 0.01
+#define MAX_SPEED_ABS_VAL 10
 
 // -------------------- Globals --------------------
 Servo servoMotor;
@@ -86,9 +89,33 @@ void initMotors() {
   pinMode(ENB, OUTPUT); pinMode(B1, OUTPUT); pinMode(B2, OUTPUT);
 }
 
+void setLeftMotorSpeed(uint8_t speed) {
+  analogWrite(ENA, speed);
+}
+
+void setRightMotorSpeed(uint8_t speed) {
+  analogWrite(ENB, speed);
+}
+
 void setMotorSpeed(uint8_t speed) {
   analogWrite(ENA, speed);
   analogWrite(ENB, speed);
+}
+
+void leftMotorForward() {
+  digitalWrite(A1, HIGH); digitalWrite(A2, LOW);
+}
+
+void leftMotorBackward() {
+  digitalWrite(A1, LOW); digitalWrite(A2, HIGH);
+}
+
+void rightMotorForward() {
+  digitalWrite(B1, LOW);  digitalWrite(B2, HIGH);
+}
+
+void rightMotorBackward() {
+  digitalWrite(B1, HIGH); digitalWrite(B2, LOW);
 }
 
 void motorForward() {
@@ -99,6 +126,14 @@ void motorForward() {
 void motorBackward() {
   digitalWrite(A1, LOW); digitalWrite(A2, HIGH);
   digitalWrite(B1, HIGH); digitalWrite(B2, LOW);
+}
+
+void leftMotorStop() {
+  digitalWrite(A1, HIGH); digitalWrite(A2, HIGH);
+}
+
+void rightMotorStop() {
+  digitalWrite(B1, HIGH); digitalWrite(B2, HIGH);
 }
 
 void motorStop() {
@@ -180,7 +215,10 @@ uint8_t mapSpeedToByte(float s) {
   // remap [0, 10] to [128, 255]
   // int range = 255 - 128; // = 127
   // float factor = (float)range / 10.0; // = 12.7
-  uint8_t mapped = 12.7 * s + 128; 
+  // uint8_t mapped = 12.7 * s + 128;
+
+  // let's use [100, 255] interval
+  uint8_t mapped = 15.5*s + 100;
   return mapped;
 }
 
@@ -192,61 +230,126 @@ uint8_t mapSpeedToByte(float s) {
  * Floats can be negative or positive and they can be expressed
  * just as any float in C.
  */
-bool parseSpeedCommand(char *cmd, float *vl, float *vr) {
-  char *tok = strtok(cmd, ';');
+bool parseSpeedCommand(char *cmd, float *vl, float *vr) {  
+  char *delim = strchr(cmd, ';');
+  if (delim == NULL) {
+    return false;
+  }
+
+  *delim = '\0';
+
   uint8_t cnt = 0;
   bool vlSet = false;
   bool vrSet = false;
-  while (tok != NULL) {
-    if (++cnt > 2) {
-      return false;
-    }
-    char *colPtr = strchr(tok, ':');
+  
+  while (cnt < 2) {
+    cnt++;
+    
+    char *colPtr = strchr(cmd, ':');
     if (colPtr == NULL) {
+      Serial.println("No colon found!");
       return false;
     }
-    *colPtr = '\0'; // terminate here to obtain label ("vl" or "vr" hopefully)
-    if (strcmp(tok, "vl") == 0) {
+    
+    *colPtr = '\0';
+    
+    if (strcmp(cmd, "vl") == 0) {
       if (vlSet == true) {
-        return false; // vl found 2 times
+        return false;
       }
       *vl = atof(colPtr+1);
       vlSet = true;
-    } else if (strcmp(tok, "vr") == 0) {
+    } else if (strcmp(cmd, "vr") == 0) {
       if (vrSet == true) {
-        return false; // vr found 2 times
+        return false;
       }
       *vr = atof(colPtr+1);
       vrSet = true;
     } else {
-      return false; // invalid label
+      Serial.print("Invalid label: ");
+      Serial.println(cmd);
+      return false;
     }
+    
+    cmd = delim+1;
   }
-  return vlSet & vrSet;
+  
+  return vlSet && vrSet;
 }
 
 // -------------------- Command Handling --------------------
 void handleCommand(String cmd) {
+  #if DEBUG
+  Serial.print("Received String: '");
+  Serial.print(cmd);
+  Serial.println("'");
+  #endif
+
   char c = cmd[0];
   switch (c) {
     case 'v':
       float vl = 0.0;
       float vr = 0.0;
-      if (!parseSpeedCommand(cmd.begin(), &vl, &vr)) {
+
+      bool ok = parseSpeedCommand(cmd.begin(), &vl, &vr);
+
+      #if DEBUG
+      Serial.print("Parse result: ");
+      Serial.println(ok);
+      Serial.print("vl: ");
+      Serial.println(vl);
+      Serial.print("vr: ");
+      Serial.println(vr);
+      #endif
+
+      if (!ok) {
         Serial.println("INV_SPEED_CMD");
         break;
       }
 
-      Serial.println(vl);
-      Serial.println(vr);
+      if (
+        vl < -MAX_SPEED_ABS_VAL || vl > MAX_SPEED_ABS_VAL ||
+        vr < -MAX_SPEED_ABS_VAL || vr > MAX_SPEED_ABS_VAL
+      ) {
+        Serial.println("OUT_OF_RANGE");
+        break;
+      }
 
-      uint8_t b_vl = mapSpeedToByte(vl);
-      uint8_t b_vr = mapSpeedToByte(vr);
+      if (vl > -MIN_SPEED_TOL && vl < MIN_SPEED_TOL) {
+        // stop motor
+        Serial.println("Stop left");
+        leftMotorStop();
+      } else {
+        uint8_t b_vl = mapSpeedToByte(vl);
+        Serial.print("b_vl: ");
+        Serial.println(b_vl);
+        setLeftMotorSpeed(b_vl);
+        if (vl < 0) {
+          Serial.println("negative left");
+          leftMotorBackward();
+        } else {
+          Serial.println("positive left");
+          leftMotorForward();
+        }
+      }
 
-      Serial.println(b_vl);
-      Serial.println(b_vr);
-
-      // TODO: set motors' speed
+      if (vr > -MIN_SPEED_TOL && vr < MIN_SPEED_TOL) {
+        // stop motor
+        Serial.println("Stop right");
+        rightMotorStop();
+      } else {
+        uint8_t b_vr = mapSpeedToByte(vr);
+        Serial.print("b_vr: ");
+        Serial.println(b_vr);
+        setRightMotorSpeed(b_vr);
+        if (vr < 0) {
+          Serial.println("negative right");
+          rightMotorBackward();
+        } else {
+          Serial.println("positive right");
+          rightMotorForward();
+        }
+      }
       break;
 
     case 'f':
@@ -316,11 +419,11 @@ void setup() {
 void loop() {
   // Read distance continuously
   int dist = getDistanceCm(); 
-  if (dist != lastDistance) {
-    lastDistance = dist;
-    // Serial.print("f ");
-    // Serial.println(lastDistance);
-  }
+  // if (dist != lastDistance) {
+  //   lastDistance = dist;
+  //   // Serial.print("f ");
+  //   // Serial.println(lastDistance);
+  // }
 
   // Stop if obstacle too close
   if (direction == DIR_FWD && lastDistance <= OBSTACLE_CM) {
