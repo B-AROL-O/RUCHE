@@ -15,13 +15,12 @@ RUN apt-get update && \
     apt-get -y install --no-install-recommends \
         tar curl zip unzip \
         python3-rosdep \
-        nlohmann-json3-dev && \
-    apt-get -y install --no-install-recommends \
-        ros-jazzy-ros-gz && \
-    apt-get -y install --no-install-recommends \
-        ros-jazzy-rviz2 && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+        nlohmann-json3-dev
+RUN apt-get -y install --no-install-recommends \
+        ros-jazzy-ros-gz \
+        ros-jazzy-rviz2 \
+    && apt-get -y autoremove \
+    && rm -rf /var/lib/apt/lists/*
 
 # User handling
 # hadolint ignore=DL4006
@@ -34,6 +33,8 @@ COPY ./entrypoint.sh /entrypoint.sh
 
 # ENV USER ubuntu
 # ENV PASSWD ubuntu
+
+USER ${USERNAME}
 
 ENTRYPOINT ["/bin/bash", "-c", "/entrypoint.sh"]
 
