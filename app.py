@@ -149,8 +149,8 @@ with gr.Blocks(title="Robot Control MCP (ROS2 / Mock)") as demo:
             api_name="move_forward",
         )
 
-        left_btn = gr.Button("Turn Left (90°)")
-        right_btn = gr.Button("Turn Right (90°)")
+        left_btn = gr.Button("Turn Left")
+        right_btn = gr.Button("Turn Right")
 
         left_btn.click(
             fn=turn_left_sync,
