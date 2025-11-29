@@ -43,13 +43,11 @@ An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https
 
 ## What the RUCHE project does
 
+Here is a short video which explains what this project is able to do:
+
 <!-- TODO: Update link as soon as @pitdagosti releases the video -->
 
-<p align="center">
-<a href="https://www.youtube.com/watch?v=cWYLJE8ZgHk">
-  <img src="https://img.youtube.com/vi/cWYLJE8ZgHk/0.jpg" alt="FREISA-GPT Demo" width="600"/>
-</a>
-</p>
+[![RUCHE Video for MCP-1st-Birthday](https://img.youtube.com/vi/cWYLJE8ZgHk/0.jpg)](https://www.youtube.com/watch?v=cWYLJE8ZgHk "RUCHE Video for MCP-1st-Birthday")
 
 <!-- TODO: Add textual description -->
 
