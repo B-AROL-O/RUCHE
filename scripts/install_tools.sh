@@ -3,6 +3,7 @@
 set -e
 
 # Launch ros2 dependency installation script
+# shellcheck disable=SC2086
 "$(dirname $0)/install_ros2_dep.sh"
 
 # Install prettier
