@@ -206,6 +206,12 @@ prettier -w filename
 | [Luigi Scalzone](https://www.linkedin.com/in/luigiscalzone/)               | [GGn0](https://github.com/GGn0)             | [GGn0](https://huggingface.co/GGn0)             |
 | [Pietro D'Agostino](https://www.linkedin.com/in/pietro-d-agostino-phd/)    | [pitdagosti](https://github.com/pitdagosti) | [pitdagosti](https://huggingface.co/pitdagosti) |
 
+### How to stay in touch
+
+You may follow [@baroloteam on Instagram](https://instagram.com/baroloteam) or [@baroloteam on X](https://x.com/baroloteam) to get notified about the progress of the RUCHE project.
+
+Please report bugs and feature requests on <https://github.com/B-AROL-O/RUCHE/issues>, or DM [B-AROL-O Team on X](https://x.com/baroloteam) about security issues or other non-public topics.
+
 ## Copyright and License
 
 Copyright (C) 2025, [B-AROL-O Team](https://github.com/B-AROL-O), all rights reserved.
