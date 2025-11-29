@@ -1,184 +1,193 @@
-import gradio as gr
+#!/usr/bin/env python3
 import asyncio
 import threading
+import math
+import time
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import TwistStamped
+
+import gradio as gr
 from huggingface_hub import InferenceClient
 
-from robot import robot_instance
+# ===============================
+# ROS2 Controller
+# ===============================
+'''
+class RobotController(Node):
+    def __init__(self):
+        super().__init__("chatbot_robot_controller")
+        self.publisher = self.create_publisher(TwistStamped, "/base_controller/cmd_vel", 10)
+
+    def publish_once(self, linear_x=0.0, angular_z=0.0):
+        msg = TwistStamped()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.twist.linear.x = float(linear_x)
+        msg.twist.angular.z = float(angular_z)
+        self.publisher.publish(msg)
+        return {"linear_x": linear_x, "angular_z": angular_z}
+
+'''
+
+class RobotController:
+    def publish_once(self, linear_x=0.0, angular_z=0.0):
+        print(f"[SIM] Publishing linear={linear_x}, angular={angular_z}")
+        return {"linear_x": linear_x, "angular_z": angular_z}
 
 
-# ============================================================
-# Dedicated async event loop for robot operations
-# ============================================================
+# ===============================
+# Command Manager
+# ===============================
+class CommandManager:
+    MAX_LINEAR_SPEED = 0.5
+    MAX_ANGULAR_SPEED = 1.0
 
-robot_loop = asyncio.new_event_loop()
+    def __init__(self, controller):
+        self.controller = controller
+        self._lock = asyncio.Lock()
+        self._active_task = None
+        self._cancel_event = None
+        self.state = {"x":0.0, "y":0.0, "heading":0.0}
 
-def start_robot_loop(loop):
+    async def move(self, distance: float):
+        async with self._lock:
+            speed = min(0.3, self.MAX_LINEAR_SPEED)
+            direction = 1.0 if distance >= 0 else -1.0
+            duration = abs(distance)/speed
+            cancel_event = asyncio.Event()
+            self._cancel_event = cancel_event
+            self._active_task = asyncio.create_task(self._publish_continuous(speed*direction, 0.0, duration, cancel_event))
+            await self._active_task
+            self._active_task = None
+            self._cancel_event = None
+            # update simulated position
+            rad = math.radians(self.state["heading"])
+            self.state["x"] += distance * math.cos(rad)
+            self.state["y"] += distance * math.sin(rad)
+            return f"Moved {distance} meters."
+
+    async def rotate(self, angle: float):
+        async with self._lock:
+            rot_speed = min(0.785, self.MAX_ANGULAR_SPEED) # ~45°/s
+            direction = 1.0 if angle>=0 else -1.0
+            duration = abs(angle)/45.0
+            cancel_event = asyncio.Event()
+            self._cancel_event = cancel_event
+            self._active_task = asyncio.create_task(self._publish_continuous(0.0, rot_speed*direction, duration, cancel_event))
+            await self._active_task
+            self._active_task = None
+            self._cancel_event = None
+            # update simulated heading
+            self.state["heading"] = (self.state["heading"] + angle) % 360
+            return f"Rotated {angle} degrees."
+
+    async def _publish_continuous(self, linear, angular, duration, cancel_event):
+        start = time.time()
+        rate = 10.0
+        period = 1.0/rate
+        while True:
+            if cancel_event.is_set():
+                self.controller.publish_once(0.0,0.0)
+                return
+            elapsed = time.time()-start
+            if elapsed>=duration:
+                self.controller.publish_once(0.0,0.0)
+                return
+            self.controller.publish_once(linear, angular)
+            await asyncio.sleep(period)
+
+    async def stop(self):
+        async with self._lock:
+            if self._active_task and not self._active_task.done():
+                self._cancel_event.set()
+                await asyncio.sleep(0.1)
+            self.controller.publish_once(0.0,0.0)
+            return "Robot stopped."
+
+    def get_state(self):
+        return self.state.copy()
+
+# ===============================
+# Start ROS loop in thread
+# ===============================
+ros_loop = asyncio.new_event_loop()
+rclpy.init()
+controller = RobotController()
+
+def ros_spin(loop):
     asyncio.set_event_loop(loop)
-    loop.run_forever()
+    executor = rclpy.executors.MultiThreadedExecutor()
+    executor.add_node(controller)
+    executor.spin()
 
-threading.Thread(target=start_robot_loop, args=(robot_loop,), daemon=True).start()
+threading.Thread(target=ros_spin, args=(ros_loop,), daemon=True).start()
 
-def run_async_task(coro):
-    """Runs an async coroutine on the robot loop and returns the result."""
-    future = asyncio.run_coroutine_threadsafe(coro, robot_loop)
+command_manager = CommandManager(controller)
+
+def run_async(coro):
+    future = asyncio.run_coroutine_threadsafe(coro, ros_loop)
     return future.result()
 
-
-# ============================================================
-# Sync wrappers for Gradio + MCP exposure
-# ============================================================
-
-def get_telemetry_sync():
-    state = robot_instance.get_state()
-    return (
-        f"Telemetry: X={state['x']}, Y={state['y']}, "
-        f"Heading={state['heading']}°, Distance Traveled={state['distance_traveled']:.2f}"
-    )
-
-def move_forward_sync(distance: float):
-    if distance <= 0:
-        return "Error: Distance must be positive."
-    
+# ===============================
+# Chatbot handler
+# ===============================
+def respond(message, history, system_message, max_tokens, temperature, top_p, hf_token: gr.OAuthToken):
+    """
+    Interpret user text as robot commands.
+    Supported: move X meters, rotate X degrees, stop, status
+    """
+    text = message.lower()
+    result = ""
     try:
-        result = run_async_task(robot_instance.move_forward(distance))
-        state = result["current_state"]
-        return (
-            f"Moved forward {distance} meters.\n"
-            f"State: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
-        )
+        if "move" in text:
+            import re
+            m = re.search(r"(-?\d+\.?\d*)", text)
+            if m:
+                distance = float(m.group(1))
+                result = run_async(command_manager.move(distance))
+            else:
+                result = "Specify distance in meters. E.g., 'move 2'"
+        elif "rotate" in text or "gira" in text:
+            import re
+            m = re.search(r"(-?\d+\.?\d*)", text)
+            if m:
+                angle = float(m.group(1))
+                result = run_async(command_manager.rotate(angle))
+            else:
+                result = "Specify angle in degrees. E.g., 'rotate 90'"
+        elif "stop" in text:
+            result = run_async(command_manager.stop())
+        elif "status" in text:
+            state = command_manager.get_state()
+            result = f"State: X={state['x']:.2f}, Y={state['y']:.2f}, Heading={state['heading']:.0f}°"
+        else:
+            # fallback to LLM
+            client = InferenceClient(token=hf_token.token, model="openai/gpt-oss-20b")
+            messages = [{"role": "system", "content": system_message}]
+            messages.extend(history)
+            messages.append({"role": "user", "content": message})
+            buffer = ""
+            for msg in client.chat_completion(messages, max_tokens=max_tokens, temperature=temperature, top_p=top_p, stream=True):
+                token = msg.choices[0].delta.content or ""
+                buffer += token
+                yield buffer
+            return
     except Exception as e:
-        return f"Error: {e}"
+        result = f"Error: {e}"
+    yield result
 
-def turn_left_sync():
-    result = run_async_task(robot_instance.turn_left())
-    state = result["current_state"]
-    return (
-        f"Left turn completed.\n"
-        f"State: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
-    )
-
-def turn_right_sync():
-    result = run_async_task(robot_instance.turn_right())
-    state = result["current_state"]
-    return (
-        f"Right turn completed.\n"
-        f"State: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
-    )
-
-
-# ============================================================
-# Chat function
-# ============================================================
-
-def respond(
-    message,
-    history: list[dict[str, str]],
-    system_message,
-    max_tokens,
-    temperature,
-    top_p,
-    hf_token: gr.OAuthToken,
-):
-    """
-    For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
-    """
-    
-    client = InferenceClient(token=hf_token.token, model="openai/gpt-oss-20b")
-
-    messages = [{"role": "system", "content": system_message}]
-    messages.extend(history)
-    messages.append({"role": "user", "content": message})
-
-    buffer = ""
-
-    for msg in client.chat_completion(
-        messages,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        top_p=top_p,
-        stream=True,
-    ):
-        token = msg.choices[0].delta.content or ""
-        buffer += token
-        yield buffer
-
-
-# ============================================================
-# Gradio UI + MCP tools
-# ============================================================
-
-"""
-For information on how to customize the ChatInterface, peruse the gradio docs: https://www.gradio.app/docs/gradio/chatinterface
-"""
-
+# ===============================
+# Launch Gradio
+# ===============================
 chatbot = gr.ChatInterface(
     fn=respond,
-    # type="messages",
     additional_inputs=[
-        gr.Textbox(value="You are a friendly Chatbot.", label="System message"),
-        gr.Slider(1, 2048, value=512, step=1, label="Max new tokens"),
-        gr.Slider(0.1, 4.0, value=0.7, step=0.1, label="Temperature"),
-        gr.Slider(0.1, 1.0, value=0.95, step=0.05, label="Top-p"),
-    ],
+        gr.Textbox(value="You are a helpful robot assistant.", label="System message"),
+        gr.Slider(1,2048,value=512,step=1,label="Max new tokens"),
+        gr.Slider(0.1,4.0,value=0.7,step=0.1,label="Temperature"),
+        gr.Slider(0.1,1.0,value=0.95,step=0.05,label="Top-p"),
+    ]
 )
 
-with gr.Blocks(title="Robot Control and Chatbot MCP") as demo:
-    with gr.Sidebar():
-        gr.LoginButton()
-
-    with gr.Tab("Chatbot"):
-        chatbot.render()
-
-    with gr.Tab("Robot Control MCP"):
-        gr.Markdown("## Robot Control and Telemetry")
-
-        robot_output = gr.Textbox(label="Result / Telemetry")
-
-        telemetry_btn = gr.Button("Update Telemetry", variant="secondary")
-        telemetry_btn.click(
-            fn=get_telemetry_sync,
-            inputs=[],
-            outputs=robot_output,
-            api_name="get_telemetry",
-        )
-
-        distance_input = gr.Number(label="Forward Distance (meters)", value=1.0)
-        forward_btn = gr.Button("Move Forward", variant="primary")
-        forward_btn.click(
-            fn=move_forward_sync,
-            inputs=[distance_input],
-            outputs=robot_output,
-            api_name="move_forward",
-        )
-
-        left_btn = gr.Button("Turn Left (90°)")
-        right_btn = gr.Button("Turn Right (90°)")
-
-        left_btn.click(
-            fn=turn_left_sync,
-            inputs=[],
-            outputs=robot_output,
-            api_name="turn_left",
-        )
-
-        right_btn.click(
-            fn=turn_right_sync,
-            inputs=[],
-            outputs=robot_output,
-            api_name="turn_right",
-        )
-
-
-# ============================================================
-# Launch
-# ============================================================
-
-if __name__ == "__main__":
-    print("Starting Gradio/MCP server...")
-    print(f"DEBUG: Gradio version: {gr.__version__}")
-    demo.launch(
-        mcp_server=True,
-        # share=False,
-        # server_name="localhost",
-        # server_port=7860,
-    )
+if __name__=="__main__":
+    chatbot.launch(mcp_server=True)
