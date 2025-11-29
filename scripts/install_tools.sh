@@ -3,7 +3,7 @@
 set -e
 
 # Launch ros2 dependency installation script
-"$(dirname \"$0\")/install_ros2_dep.sh"
+"$(dirname $0)/install_ros2_dep.sh"
 
 # Install prettier
 npm install -g prettier
