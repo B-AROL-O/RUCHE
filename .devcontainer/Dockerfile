@@ -10,12 +10,13 @@ ARG USERNAME="vscode"
 ENV DEBIAN_FRONTEND="noninteractive"
 
 # Install dependencies
-# hadolint ignore=DL3008
+# hadolint ignore=DL3009
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
         tar curl zip unzip \
         python3-rosdep \
         nlohmann-json3-dev
+# hadolint ignore=DL3008
 RUN apt-get -y install --no-install-recommends \
         ros-jazzy-ros-gz \
         ros-jazzy-rviz2 \
