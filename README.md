@@ -199,7 +199,7 @@ prettier -w filename
 ## The team behind RUCHE
 
 | Team Member                                                                | GitHub Profile                              | Hugging Face Profile                            |
-|----------------------------------------------------------------------------|---------------------------------------------|-------------------------------------------------|
+| -------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------------- |
 | [Alessio Chessa](https://www.linkedin.com/in/alessiochessa/)               | [aleche28](https://github.com/aleche28)     | [aleche28](https://huggingface.co/aleche28)     |
 | [Davide Macario](https://www.linkedin.com/in/gmacario/)                    | [davmacario](https://github.com/davmacario) | [dmacario](https://huggingface.co/dmacario)     |
 | [Gianpaolo Macario](https://www.linkedin.com/in/davide-macario-b872b4225/) | [gmacario](https://github.com/gmacario)     | [gmacario](https://github.com/gmacario)         |
