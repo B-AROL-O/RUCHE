@@ -97,7 +97,7 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_activate(
 
   // The commands are bridged directly to the bluetooth device
 
-  RCLCPP_INFO(get_logger(), "Successfully activated!");
+  RCLCPP_INFO(get_logger(), "Successfully activated");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -125,7 +125,7 @@ ElegooBt2SerialHardware::write(const rclcpp::Time & /*time*/,
   double v;
   // Read controls
   for (const auto &[name, descr] : joint_command_interfaces_) {
-    v = get_command(name);
+    v = std::min(std::max(get_command(name),-10.0),10.0);
 
     // send left message
     if (name.rfind(cfg_.left_wheel_name, 0) == 0) {
