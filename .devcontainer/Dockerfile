@@ -1,28 +1,35 @@
-FROM ghcr.io/tiryoh/ros2-desktop-vnc:jazzy
+# File: RUCHE/.devcontainer/Dockerfile
+
+# FROM ghcr.io/tiryoh/ros2-desktop-vnc:jazzy
+FROM ghcr.io/tiryoh/ros2-desktop-vnc:jazzy-20251124T0218
+
+LABEL org.opencontainers.image.description "RUCHE Dev Container (based on tiryoh/ros2-desktop-vnc)"
 
 ARG USERNAME
-
-USER root
-
+# USER root
 ENV DEBIAN_FRONTEND noninteractive
 
 # Install dependencies
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
     tar curl zip unzip \
     ros-jazzy-ros-gz ros-jazzy-rviz2 \ 
     python3-rosdep nlohmann-json3-dev && \
-    apt-get autoremove -y
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # User handling
-RUN useradd -ms /bin/bash $USERNAME && \
-    usermod -aG sudo $USERNAME && \
+RUN useradd -ms /bin/bash "$USERNAME" && \
+    usermod -aG sudo "$USERNAME" && \
     mkdir -p "/etc/sudoers.d" && \
     echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" | tee "/etc/sudoers.d/$USERNAME"
 
-    COPY ./entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 
-ENV USER ubuntu
-ENV PASSWD ubuntu
+# ENV USER ubuntu
+# ENV PASSWD ubuntu
 
 ENTRYPOINT ["/bin/bash", "-c", "/entrypoint.sh"]
+
+# EOF
