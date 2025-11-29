@@ -14,7 +14,7 @@
 # Denote all files that are truly binary and should not be modified.
 *.pdf binary
 *.png filter=lfs diff=lfs merge=lfs -text
-*.jpg binary
+*.jpg filter=lfs diff=lfs merge=lfs -text
 #
 # From https://huggingface.co/spaces/gradio-templates/chatbot
 *.7z filter=lfs diff=lfs merge=lfs -text

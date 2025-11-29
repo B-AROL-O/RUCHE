@@ -1,0 +1,9 @@
+<library path="ruche_ros2_control">
+  <class name="ruche_ros2_control/ElegooBt2SerialHardware" 
+    type="ruche_ros2_control::ElegooBt2SerialHardware" 
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      A simple ros2_control hardware interface to transmit control commands over bluetooth
+    </description>
+  </class>
+</library>
