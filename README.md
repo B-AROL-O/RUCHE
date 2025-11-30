@@ -12,6 +12,16 @@ hf_oauth_scopes:
   - inference-api
 license: mit
 short_description: ROS2-based Unified Control for Hugging-face Embodied-agents
+tags:
+  - building-mcp-track-enterprise
+  - building-mcp-track-consumer
+  - building-mcp-track-creative
+  - mcp-in-action-track-enterprise
+  - mcp-in-action-track-consumer
+  - mcp-in-action-track-creative
+  - mcp-1st-birthday
+  - robotics
+  - ros2
 ---
 
 <!-- ## RUCHE -->
@@ -33,26 +43,74 @@ An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https
 
 ## What the RUCHE project does
 
+Here is a short video which explains what this project is able to do:
+
 <!-- TODO: Update link as soon as @pitdagosti releases the video -->
 
-<p align="center">
-<a href="https://www.youtube.com/watch?v=cWYLJE8ZgHk">
-  <img src="https://img.youtube.com/vi/cWYLJE8ZgHk/0.jpg" alt="FREISA-GPT Demo" width="600"/>
-</a>
-</p>
+[![RUCHE Video for MCP-1st-Birthday](https://img.youtube.com/vi/cWYLJE8ZgHk/0.jpg)](https://www.youtube.com/watch?v=cWYLJE8ZgHk "RUCHE Video for MCP-1st-Birthday")
 
 <!-- TODO: Add textual description -->
 
 ## RUCHE System Architecture
 
+Here is a simplified block diagram which illustrates the main components of the RUCHE System Architecture and their interactions:
+
 ![ruche-arch-draft01.png](docs/images/ruche-arch-draft01.png)
 
-<!--
-TODO: One or more paragraph describing the system architecture:
+The following sections provide more details of the main blocks shown in the architecture diagram.
 
-- One subsection per component/container
-- Add text for each component
- -->
+For simplicity the components are grouped in packages which represent where the components have been deployed during the MCP-1st-Birthday Hackathon.
+
+However, most of the software components in the RUCHE architecture can run inside Docker Containers, therefore they may be relocated quite easily - for instance, they can be executed inside a [Dev Container](https://containers.dev/) and debugged using [Visual Studio Code](https://code.visualstudio.com/) as explained in chapter "How to run the RUCHE project".
+
+### Package: Hugging Face Space
+
+The core of the RUCHE application is `app.py`, a [Gradio 6](https://www.gradio.app/) application which can be deployed either inside a [Hugging Face Space](https://huggingface.co/spaces), or locally in a [Dev Container](https://containers.dev/) for development and test.
+
+The main `app.py` implements a chatbot which acts as a main interface to the end user.
+
+The chatbot waits for user inputs, then performs the inference using a LLM ([Large Language Model](https://en.wikipedia.org/wiki/Large_language_model)) to analyze the user prompt and execute a suitable action in response.
+
+In order to interact with the robots and provide more context to the LLM, `app.py` uses the tools exposed by `ros-mcp-server`, a dedicated [MCP server](https://modelcontextprotocol.io/) whose purpose is to expose to the LLM the topics provided by `ruche_ros2_control` - one of the [ROS 2 Jazzy](https://docs.ros.org/en/jazzy/index.html) nodes which are available inside the `ros2_pkg` package.
+
+### Package: Hugging Face Hub
+
+In its current implementation, the Large Language Model is provided by one [Inference Provider](https://huggingface.co/docs/inference-providers/) available through Hugging Face InferenceClient API.
+
+This approach simplified a lot the deployment of the RUCHE application, which did not have to deal with installing and running the LLM locally.
+
+Additionally, Hugging Face Hub provides an easy way for testing different LLMs - for the [MCP-1st-Birthday](https://huggingface.co/MCP-1st-Birthday) Hackathon we chose `gpt-oss-20b` released by [OpenAI](https://openai.com/) which the B-AROL-O team had already successfully used in the previous project [FREISA-GPT](https://github.com/B-AROL-O/FREISA). However, other more sophisticated models can easily be selected by means of a simple parameter change in the [`InferenceClient()`](https://huggingface.co/docs/huggingface_hub/en/package_reference/inference_client) constructor inside `app.py`.
+
+### Package: ros2_pkg
+
+This ROS 2 package uses a `ros2_control` controller to control either a simulated or a real robot for the RUCHE project.
+
+We chose to adopt the standard [ros2_control](https://control.ros.org/jazzy/index.html) framework in order to be able to easily interface with other mainstream ROS 2 applications such as [Gazebo](https://gazebosim.org/), [RViz](https://wiki.ros.org/rviz), etc.
+
+In its current implementation, RUCHE `ros2_pkg` consists of two ROS 2 nodes:
+
+- The `ruche_ros2_control` node which may be configured to control either a simulated robot, or a physical one and exposes a unified interface.
+
+- The `ros2_bt_bridge` has the purpose to translate ROS 2 topics and commands to simple messages which are broadcasted using the BLE ([Bluetooth Low Energy](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy)) protocol.
+
+In order to communicate with the BLE device, `ros2_bt_bridge` uses the Python [Bleak](https://bleak.readthedocs.io/) package which provides an abstraction of the BLE device on Windows, Linux and macOS.
+
+### Package: Elegoo Smart Car Kit
+
+For the sake of demonstrating the control of a physical robot, we chose the [Elegoo Smart Car Kit v3](https://eu.elegoo.com/en-it/blogs/arduino-projects/elegoo-smart-robot-car-kit-v3-0-plus-v3-0-v2-0-tutorial) - an inexpensive four-wheeled robot which is ideal for education. However, the architecture of RUCHE is quite flexible and may easily be adapted to more sophisticated and capable robots.
+
+The BLE messages sent by `ros2_bt_bridge` are captured by the `BLE-to-UART` dongle and delivered to the [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) which is connected to the [Arduino UNO](https://www.arduino.cc/) installed on the robot.
+
+An Arduino sketch running on the Arduino UNO is running the control loop which acts on the following inputs:
+
+- Commands received from the UART
+- Distance retrieved from the ultrasonic sensor
+
+and provides the following output:
+
+- Power to the four [DC Motors](https://docs.arduino.cc/learn/electronics/transistor-motor-control/) (rotation performed through differential drive)
+- Position of the [Servo Motor](https://docs.arduino.cc/learn/electronics/servo-motors/) for rotating the ultrasonic sensor
+- Send the updated robot state through the [UART](https://docs.arduino.cc/learn/communication/uart/)
 
 ## How to run the RUCHE project
 
@@ -185,6 +243,22 @@ If Prettier notices some misalignment you can easily reformat them before creati
 ```bash
 prettier -w filename
 ```
+
+## The team behind RUCHE
+
+| [Team Member](https://www.linkedin.com/)                                | [GitHub](https://github.com/)               | [Hugging Face](https://huggingface.co/)         |
+| ----------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------------- |
+| [Alessio Chessa](https://www.linkedin.com/in/alessiochessa/)            | [aleche28](https://github.com/aleche28)     | [aleche28](https://huggingface.co/aleche28)     |
+| [Davide Macario](https://www.linkedin.com/in/davide-macario-b872b4225/) | [davmacario](https://github.com/davmacario) | [dmacario](https://huggingface.co/dmacario)     |
+| [Gianpaolo Macario](https://www.linkedin.com/in/gmacario/)              | [gmacario](https://github.com/gmacario)     | [gmacario](https://github.com/gmacario)         |
+| [Luigi Scalzone](https://www.linkedin.com/in/luigiscalzone/)            | [GGn0](https://github.com/GGn0)             | [GGn0](https://huggingface.co/GGn0)             |
+| [Pietro D'Agostino](https://www.linkedin.com/in/pietro-d-agostino-phd/) | [pitdagosti](https://github.com/pitdagosti) | [pitdagosti](https://huggingface.co/pitdagosti) |
+
+### How to stay in touch
+
+You may follow [@baroloteam on Instagram](https://instagram.com/baroloteam) or [@baroloteam on X](https://x.com/baroloteam) to get notified about the progress of the RUCHE project.
+
+Please report bugs and feature requests on <https://github.com/B-AROL-O/RUCHE/issues>, or DM [B-AROL-O Team on X](https://x.com/baroloteam) about security issues or other non-public topics.
 
 ## Copyright and License
 

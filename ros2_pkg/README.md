@@ -83,7 +83,7 @@ Since it is possible to directly control only two of the wheels, it has been mod
 
 #### ELEGOO launch commands
 
-Open two terminals and run the following commands to launch the controller and brigde
+Open two terminals and run the following commands to launch the controller and bridge
 
 In terminal 1:
 
