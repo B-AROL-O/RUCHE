@@ -139,7 +139,7 @@ You can use [GitHub Codespaces](https://github.com/features/codespaces) to creat
 - Open a bash Terminal and type:
 
   ```bash
-  # Login to Gradio
+  # Login to Hugging Face
   uv run hf auth login
 
   # Run the RUCHE chatbot app
@@ -174,7 +174,7 @@ Create a local Development Environment with the following steps:
 - Open a bash Terminal and type:
 
   ```bash
-  # Login to Gradio
+  # Login to Hugging Face
   uv run hf auth login
 
   # Run the RUCHE chatbot app
@@ -186,6 +186,22 @@ Create a local Development Environment with the following steps:
   ![2025-11-17-vscode-run-app04.png](docs/images/2025-11-17-vscode-run-app04.png)
 
 - Continue as described in section "Inside the Hugging Face Space"
+
+### Contributors are welcome
+
+The [B-AROL-O Team](https://github.com/B-AROL-O) welcomes external contributions :pray::pray:
+
+Contributions may consist either of implementation of features or bugfixes (but we can also accept donation of hardware and/or beverages :wink:).
+
+If you need a suggestion about what you may contribute, please have a look at the issues in the [RUCHE backlog](https://github.com/B-AROL-O/RUCHE/issues) with the `help wanted` label.
+
+Contributions will be subject to the project license terms (documented in chapter "Copyright and License" below) and they may be delivered as standard [Pull Requests](https://github.com/B-AROL-O/RUCHE/pulls).
+
+Before being accepted, a Pull Requests must pass all the checks, then it will be reviewed by one or more Project Maintainers who may request changes. If the PR is accepted, the maintainer will merge it into the `main` branch of the RUCHE codebase.
+
+All the authors of Pull Requests which have been accepted and merged are listed [in this page](https://github.com/B-AROL-O/RUCHE/graphs/contributors).
+
+Please help us make the RUCHE project even better!
 
 ## Tips for contributors
 
@@ -224,16 +240,17 @@ For more specific help about how to use Excalidraw, please refer to the document
 ### Knowing Super-Linter
 
 The RUCHE project has strict code rules, which are enforced with [Super-Linter](https://github.com/super-linter/super-linter).
+All Super-Linter checks must pass before a Pull-Request can be reviewed and merged.
 
-Super-Linter checks must pass before a Pull-Request can be reviewed and merged. That this might discourage some new contributors, but this is done to mitigate risks of conflicts and reduce the chances that buggy code will go straight to production.
+While this might might discourage some potential contributors, we chose to adopt Super-Linter to mitigate the risk of conflicts and reduce the chances that buggy code will go straight to production.
 
-If you run into troubles with Super-Linter when you push your feature branch or create a Pull Request, please refer to the Super-Linter documentation.
+If you run into troubles with Super-Linter when you push your feature branch or create a Pull Request, please refer to the [Super-Linter documentation](https://github.com/super-linter/super-linter).
 
 If you believe that some Super-Linter rules should be relaxed, consider adding a new a Super-Linter configuration rule or modifying an existing one:
 
-- The Super-Linter workflow is stored under [`.github/workflows/linter.yml`](.github/workflows/linter.yml)
-- The default configuration of all Super-Linter checkers can be inspected at <https://github.com/super-linter/super-linter/tree/main/TEMPLATES>
-- The files which override the default configuration for each Super-Linter checker are stored under [.github/linters/](.github/linters/)
+- The Super-Linter GitHub workflow can be inspected at [`.github/workflows/linter.yml`](.github/workflows/linter.yml)
+- The files which override the default configuration for each linter are stored under [`.github/linters/`](.github/linters/)
+- The default configuration of all linters can be inspected at <https://github.com/super-linter/super-linter/tree/main/TEMPLATES>
 
 ### Using Prettier
 
