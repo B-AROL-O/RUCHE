@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
@@ -39,6 +40,12 @@ class ElegooBt2SerialHardware : public hardware_interface::SystemInterface {
   struct Config {
     std::string left_wheel_name = "";
     std::string right_wheel_name = "";
+    std::unordered_map<std::string, double> left_wheel_lims = {
+      {"min", -9.99},
+      {"max", 9.99}};
+    std::unordered_map<std::string, double> right_wheel_lims = {
+      {"min", -9.99},
+      {"max", 9.99}};
   };
 
  public:

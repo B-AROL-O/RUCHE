@@ -45,29 +45,36 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_init(
   // Initialize publisher node
   node_ = rclcpp::Node::make_shared("hardware_interface_publisher_node");
   string_pub_ = node_->create_publisher<std_msgs::msg::String>(
-      "hardware_interface_command", 10);
+    "hardware_interface_command", 10);
 
-  for (const hardware_interface::ComponentInfo &joint : info_.joints) {
-    // On each joint, DiffBotSystem has:
-    // - two states
-    // - one command interface
-    if (joint.command_interfaces.size() != 1) {
-      RCLCPP_FATAL(get_logger(),
-                   "Joint '%s' has %zu command interfaces found. 1 expected.",
-                   joint.name.c_str(), joint.command_interfaces.size());
-      return hardware_interface::CallbackReturn::ERROR;
-    }
+    for (const hardware_interface::ComponentInfo &joint : info_.joints) {
+      // On each joint, DiffBotSystem has:
+      // - two states
+      // - one command interface
+      if (joint.command_interfaces.size() != 1) {
+        RCLCPP_FATAL(get_logger(),
+        "Joint '%s' has %zu command interfaces found. 1 expected.",
+        joint.name.c_str(), joint.command_interfaces.size());
+        return hardware_interface::CallbackReturn::ERROR;
+      }
 
-    if (joint.command_interfaces[0].name !=
+      if (joint.name.rfind(cfg_.left_wheel_name, 0) == 0) {
+        cfg_.left_wheel_lims.at("min") = std::stof(joint.parameters.at("min"));
+        cfg_.left_wheel_lims.at("max") = std::stof(joint.parameters.at("max"));
+      } else if (joint.name.rfind(cfg_.right_wheel_name, 0) == 0) {
+        cfg_.right_wheel_lims.at("min") = std::stof(joint.parameters.at("min"));
+        cfg_.right_wheel_lims.at("max") = std::stof(joint.parameters.at("max"));
+      }
+      if (joint.command_interfaces[0].name !=
         hardware_interface::HW_IF_VELOCITY) {
-      RCLCPP_FATAL(
-          get_logger(),
-          "Joint '%s' have %s command interfaces found. '%s' expected.",
-          joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
-          hardware_interface::HW_IF_VELOCITY);
-      return hardware_interface::CallbackReturn::ERROR;
-    }
-  }
+          RCLCPP_FATAL(
+            get_logger(),
+            "Joint '%s' have %s command interfaces found. '%s' expected.",
+            joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
+            hardware_interface::HW_IF_VELOCITY);
+            return hardware_interface::CallbackReturn::ERROR;
+          }
+        }
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -97,7 +104,7 @@ hardware_interface::CallbackReturn ElegooBt2SerialHardware::on_activate(
 
   // The commands are bridged directly to the bluetooth device
 
-  RCLCPP_INFO(get_logger(), "Successfully activated!");
+  RCLCPP_INFO(get_logger(), "Successfully activated");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -129,9 +136,15 @@ ElegooBt2SerialHardware::write(const rclcpp::Time & /*time*/,
 
     // send left message
     if (name.rfind(cfg_.left_wheel_name, 0) == 0) {
-      json_cmd_["v_l"] = v;
+      json_cmd_["v_l"] = std::min(
+        std::max(
+          v, cfg_.left_wheel_lims.at("min")),
+          cfg_.left_wheel_lims.at("max"));
     } else if (name.rfind(cfg_.right_wheel_name, 0) == 0) {
-      json_cmd_["v_r"] = v;
+      json_cmd_["v_r"] = std::min(
+        std::max(
+          v, cfg_.right_wheel_lims.at("min")),
+          cfg_.right_wheel_lims.at("max"));
     }
   }
   std_msgs::msg::String msg;
