@@ -60,7 +60,35 @@ TODO: One or more paragraph describing the system architecture:
 
 - One subsection per component/container
 - Add text for each component
- -->
+-->
+
+### Package: Hugging Face Space
+
+The core of the application is `app.py`, a Gradio 6 application which can be deployed inside a Hugging Face space, or locally in a Dev Container (see below) for development and test.
+
+The main `app.py` implements a chatbot which acts as a main interface to the end-user.
+
+The chatbot waits for user inputs, then invokes the interprets them thanks to Large Language Model using the Hugging Face inference() API.
+
+In order to interact with the robots and provide more context to the LLM, `app.py` uses the tools exposed by the MCP server `ros-mcp-server`, which in turn communicates with the ROS2 Jazzy node `ros2_control` - part of the `ros2_pkg` package which was developed.
+
+### Package: Hugging Face Hub
+
+The Large Language Model is deployed on Hugging Face Hub which greatly simplified the deployment of the main application.
+
+Additionally, Hugging Face Hub provides an easy way for testing different LLMs - for the MCP-1st-Birthday we chose OpenAI gpt-oss-20b, but more complex models can easily be selected with a simple parameter change in the InferenceClient() constructor.
+
+### Package: ros2_pkg
+
+The `ros2_control` node may be configured to control either a simulated robot, or a physical one.
+
+The `ros2_bt_bridge` is a ROS2 node that the team developed and is responsible of translating ROS2 topics and commands to simple messages which are broadcasted using Bluetooth Low Energy.
+
+### Package: Elegoo Smart Car Kit
+
+For the sake of demonstrating the control of a physical robot, we chose the Elegoo Smart Car Kit v3 - an inexpensive four-wheeled robot which is ideal for education. However, the architecture of RUCHE is quite flexible so we are confident it can be adapted to more sophisticated and capable robots.
+
+The BLE messages sent by `ros2_bt_bridge` are captured by the `BLE-to-UART` dongle on the Elegoo robot and converted into bytes over the UART which is connected to the Arduino UNO on the robot. An Arduino sketch running on the Arduino UNO is finally sensing the ultrasonic sensor and controlling the motors and the servo installed on the robot.
 
 ## How to run the RUCHE project
 
