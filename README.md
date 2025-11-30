@@ -30,6 +30,13 @@ tags:
 
 <!-- ![ruche_logo_robot.png](docs/images/ruche_logo_robot.png) -->
 
+> **TL;DR FOR MCP-1ST-BIRTHDAY REVIEWERS**
+>
+> - [README file on the Hugging Face Space "RUCHE"](https://huggingface.co/spaces/MCP-1st-Birthday/RUCHE/blob/main/README.md)
+> - [Link to the Final Video](#what-the-ruche-project-does)
+> - Link(s) to post on Social Media: TODO
+> - [The team behind RUCHE](#the-team-behind-ruche)
+
 Project **RUCHE** (acronym of **R**OS2-based **U**nified **C**ontrol for **H**ugging-face **E**mbodied-agents) is a project developed by the [B-AROL-O Team](https://github.com/B-AROL-O) in response to "[MCP'st 1st Birthday](https://huggingface.co/MCP-1st-Birthday)" Hackathon.
 This Hackathon is hosted by [Anthropic](https://www.anthropic.com/) and [Gradio](https://www.gradio.app/) with additional support from [Hugging Face](https://huggingface.co/), [OpenAI](https://openai.com/), [Gemini](https://gemini.google.com/), [Modal](https://modal.com/), [Sambanova](https://sambanova.ai/), [ElevenLabs](https://elevenlabs.io/), [Blaxel](https://blaxel.ai/), [Llamaindex](https://www.llamaindex.ai/) and [Nebius](https://nebius.com/).
 
