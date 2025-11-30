@@ -50,13 +50,11 @@ An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https
 
 ## What the RUCHE project does
 
-Here is a short video which explains what this project is able to do:
+Here is a short video which explains what the RUCHE project is able to do:
 
 <!-- TODO: Update link as soon as @pitdagosti releases the video -->
 
-[![RUCHE Video for MCP-1st-Birthday](https://img.youtube.com/vi/cWYLJE8ZgHk/0.jpg)](https://www.youtube.com/watch?v=cWYLJE8ZgHk "RUCHE Video for MCP-1st-Birthday")
-
-<!-- TODO: Add textual description -->
+[![RUCHE Video for MCP-1st-Birthday](https://img.youtube.com/vi/aYeCANEgi7I/3.jpg)](https://www.youtube.com/watch?v=aYeCANEgi7I "RUCHE Video for MCP-1st-Birthday")
 
 ## RUCHE System Architecture
 
