@@ -40,12 +40,16 @@
             </hardware>
             <joint name="wheel_l_joint">
                 <command_interface name="velocity"/>
+                    <param name="min">-10</param>
+                    <param name="max">10</param>
                 <!-- No state interface are provided, but declared to start the joint_state_broadcaster -->
                 <state_interface name="position"/>
                 <state_interface name="velocity"/>
             </joint>
             <joint name="wheel_r_joint">
                 <command_interface name="velocity"/>
+                    <param name="min">-10</param>
+                    <param name="max">10</param>
                 <!-- No state interface are provided, but declared to start the joint_state_broadcaster -->
                 <state_interface name="position"/>
                 <state_interface name="velocity"/>
