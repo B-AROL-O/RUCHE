@@ -58,7 +58,7 @@ Here is a short video which explains what the RUCHE project is able to do:
 
 <!-- TODO: Update link as soon as @pitdagosti releases the video -->
 
-[![RUCHE - MCP-1st-Birthday Hackathon by the B-AROL-O Team](https://img.youtube.com/vi/BNqXee1QR-0/0.jpg)](https://www.youtube.com/watch?v=BNqXee1QR-0 "RUCHE - MCP-1st-Birthday Hackathon by the B-AROL-O Team")
+[![RUCHE - B-AROL-O Team response to MCP-1st-Birthday Hackathon](https://img.youtube.com/vi/KETZLLcVxys/0.jpg)](https://www.youtube.com/watch?v=KETZLLcVxys "RUCHE - B-AROL-O Team response to MCP-1st-Birthday Hackathon")
 
 In a nutshell, RUCHE is a [Gradio](https://www.gradio.app/)-based chatbot which allows a person to interact and control one or more robots using [natural language](https://en.wikipedia.org/wiki/Natural_language) instead of sending low-level commands or communicating using [ROS](https://ros.org/) topics.
 
