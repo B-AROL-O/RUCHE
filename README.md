@@ -197,7 +197,7 @@ Create a local Development Environment with the following steps:
 
 - Continue as described in section "Inside the Hugging Face Space"
 
-### Contributors are welcome
+## Contributors are welcome
 
 The [B-AROL-O Team](https://github.com/B-AROL-O) welcomes external contributions :pray::pray:
 
@@ -207,13 +207,13 @@ If you need a suggestion about what you may contribute, please have a look at th
 
 Contributions will be subject to the project license terms (documented in chapter "Copyright and License" below) and they may be delivered as standard [Pull Requests](https://github.com/B-AROL-O/RUCHE/pulls).
 
-Before being accepted, a Pull Requests must pass all the checks, then it will be reviewed by one or more Project Maintainers who may request changes. If the PR is accepted, the maintainer will merge it into the `main` branch of the RUCHE codebase.
+Before being accepted, a Pull Request must pass all the checks, then it will be reviewed by one or more Project Maintainers who may request changes. If the PR is accepted, the maintainer will merge it into the `main` branch of the RUCHE codebase.
 
 All the authors of Pull Requests which have been accepted and merged are listed [in this page](https://github.com/B-AROL-O/RUCHE/graphs/contributors).
 
-Please help us make the RUCHE project even better!
+> **Please help us make the RUCHE project even better!**
 
-## Tips for contributors
+The following sections are a few tips for contributors to the RUCHE project.
 
 ### Viewing and modifying Excalidraw diagrams
 
