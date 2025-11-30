@@ -32,9 +32,13 @@ tags:
 
 > **TL;DR FOR MCP-1ST-BIRTHDAY REVIEWERS**
 >
-> - [README file on the Hugging Face Space "RUCHE"](https://huggingface.co/spaces/MCP-1st-Birthday/RUCHE/blob/main/README.md)
+> - [README file of Space "RUCHE"](https://huggingface.co/spaces/MCP-1st-Birthday/RUCHE/blob/main/README.md) on Hugging Face org "[MCP-1st-Birthday](https://huggingface.co/MCP-1st-Birthday)"
 > - [Link to the Final Video](#what-the-ruche-project-does)
-> - Link(s) to post on Social Media: TODO
+> - [Links to posts on Social Media](#how-to-stay-in-touch): [Instagram](http://instagram.com/baroloteam), [~~Twitter~~ X](https://x.com/baroloteam)
+> - Used products:
+>   - [Gradio 6](http://gradio.app/)
+>   - [Hugging Face](https://huggingface.co/): [Inference Providers](https://huggingface.co/docs/inference-providers/en/index), [Spaces](https://huggingface.co/spaces)
+>   - [OpenAI](https://openai.com/): [gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b)
 > - [The team behind RUCHE](#the-team-behind-ruche)
 
 Project **RUCHE** (acronym of **R**OS2-based **U**nified **C**ontrol for **H**ugging-face **E**mbodied-agents) is a project developed by the [B-AROL-O Team](https://github.com/B-AROL-O) in response to "[MCP'st 1st Birthday](https://huggingface.co/MCP-1st-Birthday)" Hackathon.
