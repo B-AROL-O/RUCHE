@@ -15,7 +15,7 @@
     "6080:80",
     "--name",
     "ruche-devcontainer",
-    "--net=host",
+    "--net=host"
     // Uncomment on Linux to share the bluetooth adapter
     // "--privileged",
     // "--volume=/var/run/dbus:/var/run/dbus"
@@ -47,9 +47,10 @@
       "label": "noVNC"
     }
   },
-  "postStartCommand": "nohup sudo /bin/bash -c '/entrypoint.sh &' > /tmp/nohup.out",
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "scripts/install_tools.sh",
+  // Use 'postStartCommand' to run commands after the container is started.
+  "postStartCommand": "nohup sudo /bin/bash -c '/entrypoint.sh &' > /tmp/nohup.out",
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
