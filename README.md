@@ -22,6 +22,7 @@ tags:
   - mcp-1st-birthday
   - robotics
   - ros2
+sponsors: Gradio, Hugging Face, OpenAI
 ---
 
 <!-- ## RUCHE -->
