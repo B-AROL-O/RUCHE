@@ -67,7 +67,7 @@ However, most of the software components in the RUCHE architecture can run insid
 
 The core of the RUCHE application is `app.py`, a [Gradio 6](https://www.gradio.app/) application which can be deployed either inside a [Hugging Face Space](https://huggingface.co/spaces), or locally in a [Dev Container](https://containers.dev/) for development and test.
 
-The main `app.py` implements a chatbot which acts as a main interface to the end-user.
+The main `app.py` implements a chatbot which acts as a main interface to the end user.
 
 The chatbot waits for user inputs, then performs the inference using a LLM ([Large Language Model](https://en.wikipedia.org/wiki/Large_language_model)) to analyze the user prompt and execute a suitable action in response.
 
