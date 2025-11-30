@@ -47,9 +47,10 @@
       "label": "noVNC"
     }
   },
-  "postStartCommand": "nohup sudo /bin/bash -c '/entrypoint.sh &' > /tmp/nohup.out",
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "scripts/install_tools.sh",
+  // Use 'postStartCommand' to run commands after the container is started.
+  "postStartCommand": "nohup sudo /bin/bash -c '/entrypoint.sh &' > /tmp/nohup.out",
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
