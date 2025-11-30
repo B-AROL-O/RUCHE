@@ -41,9 +41,7 @@ tags:
 >   - [OpenAI](https://openai.com/): [gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b)
 > - [The team behind RUCHE](#the-team-behind-ruche)
 
-Project **RUCHE** (acronym of **R**OS2-based **U**nified **C**ontrol for **H**ugging-face **E**mbodied-agents) is an [Open Source](#copyright-and-license) project developed by the [B-AROL-O Team](https://github.com/B-AROL-O) in response to "[MCP'st 1st Birthday](https://huggingface.co/MCP-1st-Birthday)" Hackathon.
-
-This Hackathon is hosted by [Anthropic](https://www.anthropic.com/) and [Gradio](https://www.gradio.app/) with additional support from [Hugging Face](https://huggingface.co/), [OpenAI](https://openai.com/), [Gemini](https://gemini.google.com/), [Modal](https://modal.com/), [Sambanova](https://sambanova.ai/), [ElevenLabs](https://elevenlabs.io/), [Blaxel](https://blaxel.ai/), [Llamaindex](https://www.llamaindex.ai/) and [Nebius](https://nebius.com/).
+Project **RUCHE** (acronym of **R**OS2-based **U**nified **C**ontrol for **H**ugging-face **E**mbodied-agents) is an [Open Source](#copyright-and-license) project developed by the [B-AROL-O Team](https://github.com/B-AROL-O).
 
 Additionally, [Ruché](https://en.wikipedia.org/wiki/Ruch%C3%A9) is a red [Italian wine](https://en.wikipedia.org/wiki/Italian_wine) [grape variety](https://en.wikipedia.org/wiki/Grape_variety) from the [Piedmont](<https://en.wikipedia.org/wiki/Piedmont_(wine)>) region, hence the name RUCHE was chosen to continue the [B-AROL-O Team](https://github.com/B-AROL-O) tradition of giving wine-sounding names to our projects, along the line of [ARNEIS](https://github.com/B-AROL-O/ARNEIS), [FREISA](https://github.com/B-AROL-O/FREISA), [RAMIE](https://github.com/B-AROL-O/RAMIE-RAD_AI_Messing_In_Earthworks/), etc.
 
@@ -62,6 +60,12 @@ Here is a short video which explains what the RUCHE project is able to do:
 [![RUCHE - MCP-1st-Birthday Hackathon by the B-AROL-O Team](https://img.youtube.com/vi/BNqXee1QR-0/0.jpg)](https://www.youtube.com/watch?v=BNqXee1QR-0 "RUCHE - MCP-1st-Birthday Hackathon by the B-AROL-O Team")
 
 In a nutshell, RUCHE is a [Gradio](https://www.gradio.app/)-based chatbot which allows a person to interact and control one or more robots using [natural language](https://en.wikipedia.org/wiki/Natural_language) instead of sending low-level commands or communicating using [ROS](https://ros.org/) topics.
+
+### Project History
+
+The RUCHE project was created in response to the "[MCP'st 1st Birthday](https://huggingface.co/MCP-1st-Birthday)" Hackathon, hosted by [Anthropic](https://www.anthropic.com/) and [Gradio](https://www.gradio.app/) with additional support from [Hugging Face](https://huggingface.co/), [OpenAI](https://openai.com/), [Gemini](https://gemini.google.com/), [Modal](https://modal.com/), [Sambanova](https://sambanova.ai/), [ElevenLabs](https://elevenlabs.io/), [Blaxel](https://blaxel.ai/), [Llamaindex](https://www.llamaindex.ai/) and [Nebius](https://nebius.com/).
+
+The team released [RUCHE v1.0.0](https://github.com/B-AROL-O/RUCHE/releases/tag/v1.0.0) on 2025-11-30 - a few hours before the closure time of the Hackathon.
 
 ## RUCHE System Architecture
 
