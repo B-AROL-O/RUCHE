@@ -53,42 +53,62 @@ Here is a short video which explains what this project is able to do:
 
 ## RUCHE System Architecture
 
+Here is a simplified block diagram which illustrates the main components of the RUCHE System Architecture and their interactions:
+
 ![ruche-arch-draft01.png](docs/images/ruche-arch-draft01.png)
 
-<!--
-TODO: One or more paragraph describing the system architecture:
+The following sections provide more details of the main blocks shown in the architecture diagram.
 
-- One subsection per component/container
-- Add text for each component
--->
+For simplicity the components are grouped in packages which represent where the components have been deployed during the MCP-1st-Birthday Hackathon. However, the software architecture is based on Docker Containers, therefore the components may be relocated quite easily. For instance, most of the software components can be deployed inside a single Dev Container and developed from within Visual Studio Code as explained in one of the next chapters. flexible, being based on Docker containers a
+
+Each section details a package The components are enclosed into packages which 
 
 ### Package: Hugging Face Space
 
-The core of the application is `app.py`, a Gradio 6 application which can be deployed inside a Hugging Face space, or locally in a Dev Container (see below) for development and test.
+The core of the application is `app.py`, a Gradio 6 application which can be deployed either inside a [Hugging Face Space](https://huggingface.co/spaces), or locally in a [Dev Container](https://containers.dev/) (see below) for development and test.
 
 The main `app.py` implements a chatbot which acts as a main interface to the end-user.
 
-The chatbot waits for user inputs, then invokes the interprets them thanks to Large Language Model using the Hugging Face inference() API.
+The chatbot waits for user inputs, then invokes the inference of a Large Language Model to analyze the user prompt and perform a suitable action in response.
 
-In order to interact with the robots and provide more context to the LLM, `app.py` uses the tools exposed by the MCP server `ros-mcp-server`, which in turn communicates with the ROS2 Jazzy node `ros2_control` - part of the `ros2_pkg` package which was developed.
+In order to interact with the robots and provide more context to the LLM, `app.py` uses the tools exposed by `ros-mcp-server`, a  dedicated [MCP server](https://modelcontextprotocol.io/) whose purpose is to expose to the LLM the available topics of node `ros2_control` - one of the [ROS 2 Jazzy](https://docs.ros.org/en/jazzy/index.html) nodes which are available inside the `ros2_pkg` package.
 
 ### Package: Hugging Face Hub
 
-The Large Language Model is deployed on Hugging Face Hub which greatly simplified the deployment of the main application.
+In its current implementation, the Large Language Model is provided by one  [Inference Provider](https://huggingface.co/docs/inference-providers/) available through Hugging Face InferenceClient API.
 
-Additionally, Hugging Face Hub provides an easy way for testing different LLMs - for the MCP-1st-Birthday we chose OpenAI gpt-oss-20b, but more complex models can easily be selected with a simple parameter change in the InferenceClient() constructor.
+This approach simplified a lot the deployment of the RUCHE application, which did not have to deal with installing and running the LLM locally.
+
+Additionally, Hugging Face Hub provides an easy way for testing different LLMs - for the [MCP-1st-Birthday](https://huggingface.co/MCP-1st-Birthday) Hackathon we chose `gpt-oss-20b` released by [OpenAI](https://openai.com/) which the B-AROL-O team had already successfully used in the previous project [FREISA-GPT](https://github.com/B-AROL-O/FREISA). However, other more sophisticated models can easily be selected by means of a simple parameter change in the [`InferenceClient()`](https://huggingface.co/docs/huggingface_hub/en/package_reference/inference_client) constructor inside `app.py`.
 
 ### Package: ros2_pkg
 
-The `ros2_control` node may be configured to control either a simulated robot, or a physical one.
+This ROS 2 package uses a `ros2_control` controller to control either a simulated or a real robot for the RUCHE project.
 
-The `ros2_bt_bridge` is a ROS2 node that the team developed and is responsible of translating ROS2 topics and commands to simple messages which are broadcasted using Bluetooth Low Energy.
+We chose to adopt the standard [ros2_control](https://control.ros.org/jazzy/index.html) framework in order to be able to easily interface with other mainstream ROS 2 applications such as [Gazebo](https://gazebosim.org/), [RViz](https://wiki.ros.org/rviz), etc.
+
+In its current implementation, RUCHE `ros2_pkg` consists of two ROS 2 nodes:
+
+- The `ruche_ros2_control` node which may be configured to control either a simulated robot, or a physical one and exposes a unified interface.
+
+- The `ros2_bt_bridge` has the purpose to translate ROS 2 topics and commands to simple messages which are broadcasted using the BLE ([Bluetooth Low Energy](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy)) protocol.
 
 ### Package: Elegoo Smart Car Kit
 
-For the sake of demonstrating the control of a physical robot, we chose the Elegoo Smart Car Kit v3 - an inexpensive four-wheeled robot which is ideal for education. However, the architecture of RUCHE is quite flexible so we are confident it can be adapted to more sophisticated and capable robots.
+For the sake of demonstrating the control of a physical robot, we chose the [Elegoo Smart Car Kit v3](https://eu.elegoo.com/en-it/blogs/arduino-projects/elegoo-smart-robot-car-kit-v3-0-plus-v3-0-v2-0-tutorial) - an inexpensive four-wheeled robot which is ideal for education. However, the architecture of RUCHE is quite flexible and may easily be adapted to more sophisticated and capable robots.
 
-The BLE messages sent by `ros2_bt_bridge` are captured by the `BLE-to-UART` dongle on the Elegoo robot and converted into bytes over the UART which is connected to the Arduino UNO on the robot. An Arduino sketch running on the Arduino UNO is finally sensing the ultrasonic sensor and controlling the motors and the servo installed on the robot.
+The BLE messages sent by `ros2_bt_bridge` are captured by the `BLE-to-UART` dongle and delivered to the [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) which is connected to the [Arduino UNO](https://www.arduino.cc/) installed on the robot.
+
+An Arduino sketch running on the Arduino UNO is running the control loop which acts on the following inputs:
+
+- Commands received from the UART
+- Distance retrieved from the ultrasonic sensor
+
+and provides the following output:
+
+- Power to the four DC motors (rotation performed through differential drive)
+- Position of the servo for rotating the ultrasonic sensor
+- Send the updated robot state through the UART
 
 ## How to run the RUCHE project
 
