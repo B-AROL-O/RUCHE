@@ -59,23 +59,23 @@ Here is a simplified block diagram which illustrates the main components of the 
 
 The following sections provide more details of the main blocks shown in the architecture diagram.
 
-For simplicity the components are grouped in packages which represent where the components have been deployed during the MCP-1st-Birthday Hackathon. However, the software architecture is based on Docker Containers, therefore the components may be relocated quite easily. For instance, most of the software components can be deployed inside a single Dev Container and developed from within Visual Studio Code as explained in one of the next chapters. flexible, being based on Docker containers a
+For simplicity the components are grouped in packages which represent where the components have been deployed during the MCP-1st-Birthday Hackathon.
 
-Each section details a package The components are enclosed into packages which 
+However, most of the software components in the RUCHE architecture can run inside Docker Containers, therefore they may be relocated quite easily - for instance, they can be executed inside a [Dev Container](https://containers.dev/) and debugged using [Visual Studio Code](https://code.visualstudio.com/) as explained in chapter "How to run the RUCHE project".
 
 ### Package: Hugging Face Space
 
-The core of the application is `app.py`, a Gradio 6 application which can be deployed either inside a [Hugging Face Space](https://huggingface.co/spaces), or locally in a [Dev Container](https://containers.dev/) (see below) for development and test.
+The core of the RUCHE application is `app.py`, a [Gradio 6](https://www.gradio.app/) application which can be deployed either inside a [Hugging Face Space](https://huggingface.co/spaces), or locally in a [Dev Container](https://containers.dev/) for development and test.
 
 The main `app.py` implements a chatbot which acts as a main interface to the end-user.
 
-The chatbot waits for user inputs, then invokes the inference of a Large Language Model to analyze the user prompt and perform a suitable action in response.
+The chatbot waits for user inputs, then performs the inference using a LLM ([Large Language Model](https://en.wikipedia.org/wiki/Large_language_model)) to analyze the user prompt and execute a suitable action in response.
 
-In order to interact with the robots and provide more context to the LLM, `app.py` uses the tools exposed by `ros-mcp-server`, a  dedicated [MCP server](https://modelcontextprotocol.io/) whose purpose is to expose to the LLM the available topics of node `ros2_control` - one of the [ROS 2 Jazzy](https://docs.ros.org/en/jazzy/index.html) nodes which are available inside the `ros2_pkg` package.
+In order to interact with the robots and provide more context to the LLM, `app.py` uses the tools exposed by `ros-mcp-server`, a dedicated [MCP server](https://modelcontextprotocol.io/) whose purpose is to expose to the LLM the topics provided by `ruche_ros2_control` - one of the [ROS 2 Jazzy](https://docs.ros.org/en/jazzy/index.html) nodes which are available inside the `ros2_pkg` package.
 
 ### Package: Hugging Face Hub
 
-In its current implementation, the Large Language Model is provided by one  [Inference Provider](https://huggingface.co/docs/inference-providers/) available through Hugging Face InferenceClient API.
+In its current implementation, the Large Language Model is provided by one [Inference Provider](https://huggingface.co/docs/inference-providers/) available through Hugging Face InferenceClient API.
 
 This approach simplified a lot the deployment of the RUCHE application, which did not have to deal with installing and running the LLM locally.
 
@@ -93,6 +93,8 @@ In its current implementation, RUCHE `ros2_pkg` consists of two ROS 2 nodes:
 
 - The `ros2_bt_bridge` has the purpose to translate ROS 2 topics and commands to simple messages which are broadcasted using the BLE ([Bluetooth Low Energy](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy)) protocol.
 
+In order to communicate with the BLE device, `ros2_bt_bridge` uses the Python [Bleak](https://bleak.readthedocs.io/) package which provides an abstraction of the BLE device on Windows, Linux and macOS.
+
 ### Package: Elegoo Smart Car Kit
 
 For the sake of demonstrating the control of a physical robot, we chose the [Elegoo Smart Car Kit v3](https://eu.elegoo.com/en-it/blogs/arduino-projects/elegoo-smart-robot-car-kit-v3-0-plus-v3-0-v2-0-tutorial) - an inexpensive four-wheeled robot which is ideal for education. However, the architecture of RUCHE is quite flexible and may easily be adapted to more sophisticated and capable robots.
@@ -106,9 +108,9 @@ An Arduino sketch running on the Arduino UNO is running the control loop which a
 
 and provides the following output:
 
-- Power to the four DC motors (rotation performed through differential drive)
-- Position of the servo for rotating the ultrasonic sensor
-- Send the updated robot state through the UART
+- Power to the four [DC Motors](https://docs.arduino.cc/learn/electronics/transistor-motor-control/) (rotation performed through differential drive)
+- Position of the [Servo Motor](https://docs.arduino.cc/learn/electronics/servo-motors/) for rotating the ultrasonic sensor
+- Send the updated robot state through the [UART](https://docs.arduino.cc/learn/communication/uart/)
 
 ## How to run the RUCHE project
 
