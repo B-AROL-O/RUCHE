@@ -35,7 +35,7 @@ sponsors: Gradio, Hugging Face, OpenAI
 >
 > - [README file of Space "RUCHE"](https://huggingface.co/spaces/MCP-1st-Birthday/RUCHE/blob/main/README.md) on Hugging Face org "[MCP-1st-Birthday](https://huggingface.co/MCP-1st-Birthday)"
 > - [Link to the Final Video](#what-the-ruche-project-does)
-> - [Links to posts on Social Media](#how-to-stay-in-touch): [Instagram](http://instagram.com/baroloteam), [LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7400994580604579840/), [~~Twitter~~ X](https://x.com/baroloteam)
+> - [Links to posts on Social Media](#how-to-stay-in-touch): [Discord](https://discord.com/channels/879548962464493619/1437795209638318120/1444793063766753310), [Instagram](http://instagram.com/baroloteam), [LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7400994580604579840/), [~~Twitter~~ X](https://x.com/baroloteam)
 > - Used products:
 >   - [Gradio 6](http://gradio.app/)
 >   - [Hugging Face](https://huggingface.co/): [Inference Providers](https://huggingface.co/docs/inference-providers/en/index), [Spaces](https://huggingface.co/spaces)
