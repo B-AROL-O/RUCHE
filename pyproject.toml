@@ -5,7 +5,7 @@ description = "ROS2-based Unified Control for Hugging-face Embodied-agents"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "gradio[mcp,oauth]>=6.0.0",
+    "gradio[mcp,oauth]>=6.0.1",
     "hf-xet>=1.2.0",
     "huggingface-hub>=1.1.4",
 ]
