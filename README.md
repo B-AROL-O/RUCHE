@@ -64,7 +64,7 @@ In a nutshell, RUCHE is a [Gradio](https://www.gradio.app/)-based chatbot which 
 
 ### Project History
 
-The RUCHE project was created in response to the "[MCP'st 1st Birthday](https://huggingface.co/MCP-1st-Birthday)" Hackathon, hosted by [Anthropic](https://www.anthropic.com/) and [Gradio](https://www.gradio.app/) with additional support from [Hugging Face](https://huggingface.co/), [OpenAI](https://openai.com/), [Gemini](https://gemini.google.com/), [Modal](https://modal.com/), [Sambanova](https://sambanova.ai/), [ElevenLabs](https://elevenlabs.io/), [Blaxel](https://blaxel.ai/), [Llamaindex](https://www.llamaindex.ai/) and [Nebius](https://nebius.com/).
+The RUCHE project was created in response to the "[MCP's 1st Birthday](https://huggingface.co/MCP-1st-Birthday)" Virtual Hackathon, hosted by [Anthropic](https://www.anthropic.com/) and [Gradio](https://www.gradio.app/) with additional support from [Hugging Face](https://huggingface.co/), [OpenAI](https://openai.com/), [Gemini](https://gemini.google.com/), [Modal](https://modal.com/), [Sambanova](https://sambanova.ai/), [ElevenLabs](https://elevenlabs.io/), [Blaxel](https://blaxel.ai/), [Llamaindex](https://www.llamaindex.ai/) and [Nebius](https://nebius.com/).
 
 The team released [RUCHE v1.0.0](https://github.com/B-AROL-O/RUCHE/releases/tag/v1.0.0) on 2025-11-30 - a few hours before the closure time of the Hackathon.
 
