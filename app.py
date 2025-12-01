@@ -1,74 +1,127 @@
 import gradio as gr
-import asyncio
 import threading
-from huggingface_hub import InferenceClient
+import time
 
-from robot import robot_instance
+# ===========================
+# MOCK / ROS2 SWITCH
+# ===========================
+MOCK_ROS = True  # set False for real ROS2
 
+if MOCK_ROS:
+    # ===========================
+    # Mock ROS classes
+    # ===========================
+    class TwistStamped:
+        def __init__(self):
+            class Twist:
+                def __init__(self):
+                    self.linear = type("obj", (), {"x": 0})()
+                    self.angular = type("obj", (), {"z": 0})()
+            self.twist = Twist()
 
-# ============================================================
-# Dedicated async event loop for robot operations
-# ============================================================
+    class Node:
+        def __init__(self, name):
+            self.name = name
 
-robot_loop = asyncio.new_event_loop()
+        def create_publisher(self, msg_type, topic, queue_size):
+            return self
 
-def start_robot_loop(loop):
-    asyncio.set_event_loop(loop)
-    loop.run_forever()
+        def publish(self, msg):
+            print(f"[MOCK ROS] Publishing: linear={msg.twist.linear.x}, angular={msg.twist.angular.z}")
 
-threading.Thread(target=start_robot_loop, args=(robot_loop,), daemon=True).start()
+        def create_rate(self, hz):
+            class Rate:
+                def sleep(self): time.sleep(0.1)
+            return Rate()
 
-def run_async_task(coro):
-    """Runs an async coroutine on the robot loop and returns the result."""
-    future = asyncio.run_coroutine_threadsafe(coro, robot_loop)
-    return future.result()
+        def get_clock(self):
+            class Clock:
+                def now(self):
+                    class Time:
+                        def __init__(self):
+                            t = time.time()
+                            self.seconds = int(t)
+                            self.nanoseconds = int((t - int(t)) * 1e9)
+                    return Time()
+            return Clock()
 
+        def destroy_node(self): pass
 
-# ============================================================
-# Sync wrappers for Gradio + MCP exposure
-# ============================================================
+    class rclpy:
+        @staticmethod
+        def init(): pass
+        @staticmethod
+        def spin(node): pass
 
-def get_telemetry_sync():
-    state = robot_instance.get_state()
-    return (
-        f"Telemetry: X={state['x']}, Y={state['y']}, "
-        f"Heading={state['heading']}°, Distance Traveled={state['distance_traveled']:.2f}"
-    )
+else:
+    import rclpy
+    from rclpy.node import Node
+    from geometry_msgs.msg import TwistStamped
 
-def move_forward_sync(distance: float):
-    if distance <= 0:
-        return "Error: Distance must be positive."
-    
-    try:
-        result = run_async_task(robot_instance.move_forward(distance))
-        state = result["current_state"]
-        return (
-            f"Moved forward {distance} meters.\n"
-            f"State: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
-        )
-    except Exception as e:
-        return f"Error: {e}"
+# ===========================
+# ROS2 Node & Publisher
+# ===========================
+class RobotPublisher(Node):
+    def __init__(self):
+        super().__init__('gradio_robot_controller')
+        self.pub = self.create_publisher(TwistStamped, '/base_controller/cmd_vel', 10)
+
+    def seconds_nanoseconds(self):
+        now = self.get_clock().now()
+        return now.seconds, now.nanoseconds
+
+    def send_twist(self, linear_x=0.0, angular_z=0.0, duration=1.0):
+        twist_msg = TwistStamped()
+        twist_msg.twist.linear.x = linear_x
+        twist_msg.twist.angular.z = angular_z
+
+        sec, nsec = self.seconds_nanoseconds()
+        start_time = sec + nsec / 1e9
+
+        rate = self.create_rate(10)
+        while True:
+            sec, nsec = self.seconds_nanoseconds()
+            current_time = sec + nsec / 1e9
+            if current_time - start_time >= duration:
+                break
+            self.pub.publish(twist_msg)
+            rate.sleep()
+
+        twist_msg.twist.linear.x = 0.0
+        twist_msg.twist.angular.z = 0.0
+        self.pub.publish(twist_msg)
+        return f"Command sent: linear={linear_x}, angular={angular_z}, duration={duration:.2f}s"
+
+# ===========================
+# Initialize ROS / Mock
+# ===========================
+rclpy.init()
+robot_node = RobotPublisher()
+ros_thread = threading.Thread(target=rclpy.spin, args=(robot_node,), daemon=True)
+ros_thread.start()
+
+# ===========================
+# Robot control functions
+# ===========================
+def move_forward_sync(distance_meters: float):
+    speed = 0.7
+    duration = distance_meters / speed
+    return robot_node.send_twist(linear_x=speed, angular_z=0.0, duration=duration)
 
 def turn_left_sync():
-    result = run_async_task(robot_instance.turn_left())
-    state = result["current_state"]
-    return (
-        f"Left turn completed.\n"
-        f"State: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
-    )
+    angular_speed = 1.4
+    duration = 1.0
+    return robot_node.send_twist(linear_x=0.0, angular_z=angular_speed, duration=duration)
 
 def turn_right_sync():
-    result = run_async_task(robot_instance.turn_right())
-    state = result["current_state"]
-    return (
-        f"Right turn completed.\n"
-        f"State: X={state['x']}, Y={state['y']}, Heading={state['heading']}°"
-    )
+    angular_speed = -1.4
+    duration = 1.0
+    return robot_node.send_twist(linear_x=0.0, angular_z=angular_speed, duration=duration)
 
-
-# ============================================================
-# Chat function
-# ============================================================
+# ===========================
+# Hugging Face Chatbot
+# ===========================
+from huggingface_hub import InferenceClient
 
 def respond(
     message,
@@ -79,10 +132,6 @@ def respond(
     top_p,
     hf_token: gr.OAuthToken,
 ):
-    """
-    For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
-    """
-    
     client = InferenceClient(token=hf_token.token, model="openai/gpt-oss-20b")
 
     messages = [{"role": "system", "content": system_message}]
@@ -102,47 +151,34 @@ def respond(
         buffer += token
         yield buffer
 
-
-# ============================================================
-# Gradio UI + MCP tools
-# ============================================================
-
-"""
-For information on how to customize the ChatInterface, peruse the gradio docs: https://www.gradio.app/docs/gradio/chatinterface
-"""
-
-chatbot = gr.ChatInterface(
-    fn=respond,
-    # type="messages",
-    additional_inputs=[
-        gr.Textbox(value="You are a friendly Chatbot.", label="System message"),
-        gr.Slider(1, 2048, value=512, step=1, label="Max new tokens"),
-        gr.Slider(0.1, 4.0, value=0.7, step=0.1, label="Temperature"),
-        gr.Slider(0.1, 1.0, value=0.95, step=0.05, label="Top-p"),
-    ],
-)
-
-with gr.Blocks(title="Robot Control and Chatbot MCP") as demo:
+# ===========================
+# Gradio UI
+# ===========================
+with gr.Blocks(title="Robot + Chat MCP") as demo:
+    # Sidebar for HF login
     with gr.Sidebar():
-        gr.LoginButton()
+        hf_login = gr.LoginButton()
 
+    # Chatbot tab (one only)
     with gr.Tab("Chatbot"):
-        chatbot.render()
-
-    with gr.Tab("Robot Control MCP"):
-        gr.Markdown("## Robot Control and Telemetry")
-
-        robot_output = gr.Textbox(label="Result / Telemetry")
-
-        telemetry_btn = gr.Button("Update Telemetry", variant="secondary")
-        telemetry_btn.click(
-            fn=get_telemetry_sync,
-            inputs=[],
-            outputs=robot_output,
-            api_name="get_telemetry",
+        chatbot = gr.ChatInterface(
+            fn=respond,
+            additional_inputs=[
+                gr.Textbox(value="You are a helpful assistant.", label="System message"),
+                gr.Slider(1, 2048, value=512, step=1, label="Max new tokens"),
+                gr.Slider(0.1, 4.0, value=0.7, step=0.1, label="Temperature"),
+                gr.Slider(0.1, 1.0, value=0.95, step=0.05, label="Top-p"),
+                hf_login
+            ],
         )
 
+    # Robot Control tab
+    with gr.Tab("Robot Control MCP"):
+        gr.Markdown("## Robot Control")
+        robot_output = gr.Textbox(label="Result")
+
         distance_input = gr.Number(label="Forward Distance (meters)", value=1.0)
+
         forward_btn = gr.Button("Move Forward", variant="primary")
         forward_btn.click(
             fn=move_forward_sync,
@@ -168,17 +204,9 @@ with gr.Blocks(title="Robot Control and Chatbot MCP") as demo:
             api_name="turn_right",
         )
 
-
-# ============================================================
+# ===========================
 # Launch
-# ============================================================
-
+# ===========================
 if __name__ == "__main__":
     print("Starting Gradio/MCP server...")
-    print(f"DEBUG: Gradio version: {gr.__version__}")
-    demo.launch(
-        mcp_server=True,
-        # share=False,
-        # server_name="localhost",
-        # server_port=7860,
-    )
+    demo.launch(mcp_server=True)
