@@ -37,13 +37,17 @@ remmina -c vnc://vscode@localhost:5901
 
 A window will open with the request for the VNC password:
 
-<img width="692" height="569" alt="image" src="https://gist.github.com/user-attachments/assets/e404a0b4-2c12-400e-9b9a-cb553553ac26" />
+<!-- <img width="692" height="569" alt="image" src="https://gist.github.com/user-attachments/assets/e404a0b4-2c12-400e-9b9a-cb553553ac26" /> -->
+
+![2025-11-30-vnc-devcontainer01.png](images/2025-11-30-vnc-devcontainer01.png)
 
 Enter VNC password: `vscode`
 
 As a result, a Linux desktop will be displayed:
 
-<img width="1920" height="1200" alt="image" src="https://gist.github.com/user-attachments/assets/bd1e2ae3-dfc5-4759-bbca-6a2162b4b37b" />
+<!-- <img width="1920" height="1200" alt="image" src="https://gist.github.com/user-attachments/assets/bd1e2ae3-dfc5-4759-bbca-6a2162b4b37b" /> -->
+
+![2025-11-30-vnc-devcontainer01.png](images/2025-11-30-vnc-devcontainer01.png)
 
 Right click the **Terminator** icon > Open
 
@@ -70,6 +74,8 @@ ros2 topic pub /base_controller/cmd_vel geometry_msgs/msg/TwistStamped \
 
 Screenshot:
 
-<img width="1920" height="1200" alt="image" src="https://gist.github.com/user-attachments/assets/79c5afdb-145a-4110-9259-0b435c30acfb" />
+<!-- <img width="1920" height="1200" alt="image" src="https://gist.github.com/user-attachments/assets/79c5afdb-145a-4110-9259-0b435c30acfb" /> -->
+
+![2025-11-30-vnc-devcontainer03.png](images/2025-11-30-vnc-devcontainer03.png)
 
 <!-- EOF -->
