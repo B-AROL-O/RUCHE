@@ -24,7 +24,7 @@ Logged in as `gmacario@delta`:
 - Launch Visual Studio Code
 - Inside Visual Studio Code, type **Ctrl-Shift-P** to open the Command Palette and select
   > Remote-SSH: Connect to Host...
-  to connect to `gmacario@labai-ubnt02` via SSH
+  > to connect to `gmacario@labai-ubnt02` via SSH
 
 Once Visual Studio Code is running as `gmacario@labai-ubnt02`:
 
